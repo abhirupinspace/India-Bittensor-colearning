@@ -1,0 +1,84 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #0D102D;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #FFFFFF;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.footer {
+  background-color: #0D102D !important; /* Change this to your desired color */
+}
+.navbar {
+  background-color: #0D102D !important; /* Change this to your preferred color */
+}
+
+.navbar__link, .navbar__title {
+  color: white !important; /* Ensures text is white */
+}
+
+/* ==========================================================================
+   Bittensor Brand Tokens
+   Per Opentensor Foundation Graphic Standards (2024).
+   Palette strictly grayscale. Accent colors forbidden for logo/brand surfaces.
+   ========================================================================== */
+:root {
+  --bt-white: #FFFFFF;
+  --bt-grey-100: #F8F9FA;
+  --bt-grey-200: #F1F3F4;
+  --bt-grey-300: #DBDDE1;
+  --bt-grey-400: #BDC1C6;
+  --bt-grey-500: #5F6368;
+  --bt-grey-600: #3C4043;
+  --bt-grey-700: #282A2D;
+  --bt-grey-800: #17181B;
+  --bt-grey-900: #0E1013;
+  --bt-black: #000000;
+
+  /* Font stack hints — Haffer / DM Mono not bundled; fall back to
+     typographically similar system fonts. */
+  --bt-font-display: "Haffer", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bt-font-code: "DM Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Bittensor logo utility — respect clear-space rule (FIG D/E). */
+.bittensor-logo {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0.25em;
+}
+.bittensor-logo--symbol  { height: 1.2em; width: auto; }
+.bittensor-logo--wordmark { height: 1.4em; width: auto; }
+.bittensor-logo--hero    { height: 80px;  width: auto; display: block; margin: 1.5rem 0; }
+
+[data-theme='dark'] .bittensor-logo--auto-invert {
+  filter: invert(1);
+}
+
+/* Code blocks in Bittensor sections — DM Mono preferred per brand. */
+.markdown code {
+  font-family: var(--bt-font-code);
+}

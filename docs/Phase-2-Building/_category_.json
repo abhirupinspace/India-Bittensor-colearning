@@ -1,0 +1,8 @@
+{
+  "label": "Phase 2 — Building on Bittensor",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Hands-on mining. Three guided projects: a local mining intro that gets you ready for any subnet, then production miners on Sportstensor (SN41) and Data Universe (SN13). By the end of this phase you should have a real miner running."
+  }
+}

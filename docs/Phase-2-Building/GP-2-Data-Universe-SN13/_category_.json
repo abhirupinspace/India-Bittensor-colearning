@@ -1,0 +1,8 @@
+{
+  "label": "Guided Project II — Data Universe (SN13) Mining",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Data Universe (SN13) miner setup: intro, environment setup, miner configuration & data scraping strategy, scoring system optimization, S3 storage configuration & upload, and the interaction layer. Earn TAO by feeding the decentralized data layer."
+  }
+}
