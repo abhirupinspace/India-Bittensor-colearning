@@ -55,15 +55,14 @@ const config: Config = {
   themeConfig: {
     colorMode: {
       defaultMode: 'light',
-      disableSwitch: false,
-      respectPrefersColorScheme: true,
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'Bittensor Co-Learning Camp',
       logo: {
         alt: 'Bittensor',
         src: 'img/bittensor/symbol-white.svg',
-        srcDark: 'img/bittensor/symbol-white.svg',
       },
       items: [
         {
@@ -114,7 +113,6 @@ const config: Config = {
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
       additionalLanguages: ['bash', 'python', 'json', 'yaml', 'toml', 'rust'],
     },
   } satisfies Preset.ThemeConfig,

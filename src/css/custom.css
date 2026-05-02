@@ -17,18 +17,6 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
-  --ifm-color-primary: #FFFFFF;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
-}
-
 .footer {
   background-color: #0D102D !important; /* Change this to your desired color */
 }
@@ -73,10 +61,6 @@
 .bittensor-logo--symbol  { height: 1.2em; width: auto; }
 .bittensor-logo--wordmark { height: 1.4em; width: auto; }
 .bittensor-logo--hero    { height: 80px;  width: auto; display: block; margin: 1.5rem 0; }
-
-[data-theme='dark'] .bittensor-logo--auto-invert {
-  filter: invert(1);
-}
 
 /* Code blocks in Bittensor sections — DM Mono preferred per brand. */
 .markdown code {

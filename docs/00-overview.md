@@ -10,7 +10,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 <img
   src={useBaseUrl('/img/bittensor/logotype-black.svg')}
   alt="Bittensor"
-  className="bittensor-logo bittensor-logo--hero bittensor-logo--auto-invert"
+  className="bittensor-logo bittensor-logo--hero"
 />
 
 # Bittensor Co-Learning Camp: Overview
