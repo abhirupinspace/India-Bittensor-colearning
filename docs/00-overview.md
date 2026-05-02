@@ -1,7 +1,7 @@
 ---
 sidebar_position: 0
 title: 'Overview & Learning Path'
-description: 'Complete roadmap for Bittensor Co-Learning Camp India: from zero (Web3 & AI) to running an active miner on SN41 and SN13.'
+description: 'Roadmap for the Bittensor Co-Learning Camp India: 4 days from zero (Web3 & AI) to running miners on SN41 and SN13.'
 slug: /overview
 ---
 
@@ -16,33 +16,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 # Bittensor Co-Learning Camp: Overview
 
 > **Co-Learning Camp India · HackQuest × Bittensor**
-> **Offline · India · 100% FREE**
 
-Welcome to the **Bittensor Co-Learning Camp**! This curriculum is designed to take you from **absolute zero**: no prior experience with blockchain or AI: all the way to **running your own miner** on two production Bittensor subnets: **Sportstensor (SN41)** and **Data Universe (SN13)**.
+Welcome to the **Bittensor Co-Learning Camp**! This curriculum takes you from **absolute zero** — no prior experience with blockchain or AI — all the way to **running your own miner** on two production Bittensor subnets: **Sportstensor (SN41)** and **Data Universe (SN13)**.
 
 ---
 
-## 🎯 Who Is This Curriculum For?
+## Who Is This Curriculum For?
 
 :::info Target Audience
 This curriculum is beginner-friendly and well-suited for:
-- 🧑‍🎓 **CS / Data Science students** who want to explore decentralized AI
-- 👨‍💻 **Software engineers** curious about AI × Crypto
-- 🌐 **Web3 builders** looking to expand into AI infrastructure
-- 🤔 **Total beginners** who don't yet know what Web3 or AI is, but are ready to learn
+- **CS / Data Science students** who want to explore decentralized AI
+- **Software engineers** curious about AI × Crypto
+- **Web3 builders** looking to expand into AI infrastructure
+- **Total beginners** who don't yet know what Web3 or AI is, but are ready to learn
 :::
 
 You don't need prior blockchain experience. You don't need to be an AI researcher. What you do need: **the willingness to learn and to execute.**
 
 ---
 
-## 🗺️ Learning Path: 4 Phases
+## Learning Path: 4 Days
 
 ```mermaid
 flowchart LR
-    A[Phase 0<br/>Prerequisites<br/>Zero → Concepts] --> B[Phase 1<br/>Fundamentals<br/>Bittensor Theory]
-    B --> C[Phase 2<br/>Building<br/>Hands-on Mining]
-    C --> D[Phase 3<br/>Resources<br/>Continue Independently]
+    A[Day 1<br/>Foundations<br/>Web3, AI, Bittensor] --> B[Day 2<br/>Tooling & Ecosystem<br/>btcli, wallets, subnets]
+    B --> C[Day 3<br/>Testnet & Registration<br/>Local miner, SN41, SN13]
+    C --> D[Day 4<br/>Mining & Optimization<br/>Run, debug, optimize]
 
     style A fill:#DBDDE1,stroke:#3C4043
     style B fill:#F8F9FA,stroke:#5F6368
@@ -50,136 +49,83 @@ flowchart LR
     style D fill:#DBDDE1,stroke:#000000
 ```
 
-### 🟡 Phase 0: Prerequisites (Start From Zero)
+### Day 1 — Foundations
 
-The most basic foundation. If you've never heard of "Web3" or "decentralized AI", start here.
+The conceptual base. If you've never heard of "Web3" or "decentralized AI", start here.
 
-- **Unit 1:** What is Web3?
-- **Unit 2:** What is AI?
-- **Unit 3:** Centralized AI vs Decentralized AI
-- **Unit 4:** Why does Bittensor matter?
+- What is Web3?
+- What is AI?
+- Centralized AI vs Decentralized AI
+- Why does Bittensor matter?
+- The Rise of AI and the Emergence of Bittensor
+- Core Concepts & Mechanisms (subnets, miners, validators, Yuma Consensus)
+- Tooling & Tokenomics (btcli, TAO, dTAO, alpha tokens)
 
-### 🔵 Phase 1: Bittensor Fundamentals
+### Day 2 — Tooling & Ecosystem
 
-We get into Bittensor theory: architecture, incentive mechanism, and core subnets.
+Get your environment ready and tour the subnets you'll mine on.
 
-**Concept I: Introduction to Bittensor**
-- Unit 1: The Rise of AI and the Emergence of Bittensor
-- Unit 2: Core Concepts & Mechanisms
-- Unit 3: Tooling & Tokenomics
+- Intro & Hardware Check
+- Installing Python, venv & btcli
+- Wallet Setup (coldkey & hotkey)
+- **Chutes**: Decentralized Inference Infrastructure
+- **Data Universe (SN13)**: Decentralized Data Provision
+- **Sportstensor (SN41)**: Sports Event Prediction
+- **Ridges**: Engineering & Code Intelligence
 
-**Concept II: Core Bittensor Subnets**
-- Unit 1: **Chutes**: Decentralized Inference Infrastructure
-- Unit 2: **Data Universe** (SN13): Decentralized Data Provision
-- Unit 3: **Sportstensor** (SN41): Sports Event Prediction
-- Unit 4: **Ridges**: Engineering & Code Intelligence
+### Day 3 — Testnet & Registration
 
-### 🟢 Phase 2: Building on a Bittensor Subnet
+Spin up a miner on testnet, then register on the two production subnets.
 
-Hands-on practice. This is where you **actually become a miner.**
+- Register on a Testnet Subnet
+- Run a Local Miner
+- Connection, Ports & Ngrok for CGNAT
+- Intro to SN41 Sportstensor
+- Bittensor Wallet & TAO Funding (mainnet)
+- Register the Miner on SN41
+- Almanac Registration & Identity Binding
+- Intro to SN13 Data Universe
+- Environment Setup & Deployment (VPS)
 
-**Guided Project 0: Local Mining Intro** (7 units)
-1. Intro & Hardware Check
-2. Installing btcli
-3. Wallet Setup
-4. Registering on a Testnet Subnet
-5. Running a Local Miner
-6. Connections & Ports
-7. Local Debugging
+### Day 4 — Mining & Optimization
 
-**Guided Project I: Sportstensor (SN41) Mining Guide** (7 units)
-1. Introduction to SN41
-2. Bittensor Wallet Setup & TAO Funding
-3. Registering a Miner on Sportstensor
-4. Almanac Registration & Miner Identity Binding
-5. Miner Initialization & Metadata Registration
-6. Programmatic Trade Execution
-7. Trading Strategies
+Run miners 24/7 and improve their score.
 
-**Guided Project II: Data Universe (SN13) Mining** (6 units)
-1. Introduction to SN13
-2. Environment Setup & Deployment
-3. Miner Configuration & Data Scraping Strategy
-4. Understanding the Scoring System & Optimizing Rewards
-5. S3 Storage Configuration & Data Upload
-6. Interaction Layer
+- Local Debugging & Troubleshooting
+- SN41 Miner Init & Metadata Registration
+- SN41 Programmatic Trade Execution
+- SN41 Trading Strategies (CLV, Elo/ML, arbitrage)
+- SN13 Miner Configuration & Scraping Strategy
+- SN13 Scoring System & Reward Optimization
+- SN13 S3 Storage Configuration & Upload
+- SN13 Interaction Layer (FastAPI, monitoring)
 
-### 🟣 Phase 3: More Bittensor Resources
+### Resources
 
-Links to the whitepaper, Taostats, official repos, YouTube, faucets: everything you need to keep exploring on your own after the camp ends.
+Whitepaper, Taostats, official repos, YouTube, faucet, glossary — everything you need to keep exploring on your own after the camp ends.
 
 ---
 
-## 📅 Townhall Schedule (Live, Offline)
-
-| TH | Date | Topic |
-|----|------|-------|
-| **TH1** | Day 1 · 19:00 IST | Intro: Architecture, Subnets, Miners & Validators |
-| **TH2** | Day 4 · 19:00 IST | Tooling, Tokenomics & Core Subnets |
-| **TH3** | Day 8 · 19:00 IST | Hands-on Mining: SN41 & SN13 |
-| **TH4** | Day 11 · 19:00 IST | 🎉 Graduation Day |
-
-:::tip Pro Tip
-Read Phase 0 and Phase 1 material **before TH1** so you can join the discussion confidently. The written material here goes deeper than what we can cover in a 2-hour live session.
-:::
-
----
-
-## 🎓 How to Graduate
-
-To earn the **NFT Certificate + Quack Believers invitation**, you must complete **ALL** of the following:
-
-### ✅ Requirements
-
-1. **Attend at least 3 of 4 Townhalls** (live, not recordings)
-2. **Stay in the Telegram group** until Graduation Day
-3. **Submit miner proof (5 items)** before TH4:
-   - Hotkey address (`btcli wallet overview`)
-   - Subnet ID / NetUID
-   - Miner UID (`btcli neuron list --netuid <netuid>`)
-   - Screenshot of the miner running in your terminal
-   - Link to an X (Twitter) reflection post (tag `@HackQuest_` & `@bittensor`)
-4. **Complete the HackQuest Learning Track** on the platform
-
-### 🏆 Reward Tiers
-
-| Tier | Criteria | Reward |
-|------|----------|--------|
-| 🥇 **Top 5** | Valid submission + highest engagement & progress | HackQuest hoodie |
-| 🥈 **Top 6–20** | Valid submission + next-highest engagement | Stickers + HackQuest t-shirt |
-| 🎓 **Graduate** | All requirements met | NFT Certificate + Quack Believers invite |
-| 📋 **Participant** | Attended but submission incomplete | Certificate of Participation |
-
----
-
-## 💬 Support & Community
-
-- **Bittensor Co-Learning Camp India Telegram group**: link shared after registration
-- **HackQuest Discord / channel**: general discussion
-- **Quack Believers**: alumni network (invite-only for graduates)
-
----
-
-## 🚀 How to Start
+## How to Start
 
 :::tip Recommended order
-1. **Read Phase 0 first** if you're a complete beginner: don't jump straight to Phase 1.
-2. **Finish Phase 1 before TH2**: the tokenomics and subnet discussion will land much better.
-3. **Finish Phase 2 around TH3**: the hands-on workshop will reference the steps documented here.
-4. **Phase 3** is meant for self-directed exploration after the camp ends.
+1. **Read Day 1 first** if you're a complete beginner — don't jump straight to subnet specifics.
+2. **Get through Day 2** before touching mainnet — the wallet/btcli flow is required.
+3. **Day 3 is hands-on** — have your laptop and a terminal ready.
+4. **Day 4 is where most of the work lives** — running a real miner means iterating.
 :::
 
-**Ready?** Continue to [Phase 0: Unit 1: What is Web3?](./Phase-0-Prerequisites/what-is-web3) 👉
+**Ready?** Continue to [Day 1 — What is Web3?](./Day-1-Foundations/what-is-web3)
 
 ---
 
-### 📚 Quick References
+### Quick References
 
-- 🌐 [Bittensor Official](https://bittensor.com)
-- 📄 [Whitepaper](https://bittensor.com/whitepaper)
-- 📊 [Taostats Explorer](https://taostats.io)
-- 🛠️ [Official Documentation](https://docs.bittensor.com)
-- 💧 [Testnet Faucet](https://faucet.bittensor.com)
+- [Bittensor Official](https://bittensor.com)
+- [Whitepaper](https://bittensor.com/whitepaper)
+- [Taostats Explorer](https://taostats.io)
+- [Official Documentation](https://docs.bittensor.com)
+- [Testnet Faucet](https://faucet.bittensor.com)
 
 ---
 

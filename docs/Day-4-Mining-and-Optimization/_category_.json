@@ -1,0 +1,8 @@
+{
+  "label": "Day 4 — Mining & Optimization",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Run miners 24/7 and improve their score. Local debugging playbook, SN41 trade execution + strategies (CLV, Elo/ML, arbitrage), and SN13 scraping config, scoring optimization, S3 upload, and the interaction layer."
+  }
+}

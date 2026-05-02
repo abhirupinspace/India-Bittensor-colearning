@@ -1,8 +1,0 @@
-{
-  "label": "Concept I — Introduction to Bittensor",
-  "position": 1,
-  "link": {
-    "type": "generated-index",
-    "description": "Foundational theory: how AI evolved into the decentralized era, Bittensor's core architecture and Yuma Consensus, and the tooling and tokenomics (TAO, dTAO, alpha tokens) that hold the network together."
-  }
-}

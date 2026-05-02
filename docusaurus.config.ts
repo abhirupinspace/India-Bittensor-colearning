@@ -86,10 +86,11 @@ const config: Config = {
           title: 'Curriculum',
           items: [
             {label: 'Overview', to: '/overview'},
-            {label: 'Phase 0 — Prerequisites', to: '/Phase-0-Prerequisites/what-is-web3'},
-            {label: 'Phase 1 — Fundamentals', to: '/Phase-1-Fundamentals/Concept-1-Introduction/rise-of-ai-bittensor'},
-            {label: 'Phase 2 — Building', to: '/Phase-2-Building/GP-0-Local-Mining-Intro/intro-and-hardware-check'},
-            {label: 'Phase 3 — Resources', to: '/Phase-3-Resources/resources'},
+            {label: 'Day 1 — Foundations', to: '/Day-1-Foundations/what-is-web3'},
+            {label: 'Day 2 — Tooling & Ecosystem', to: '/Day-2-Tooling-and-Ecosystem/intro-and-hardware-check'},
+            {label: 'Day 3 — Testnet & Registration', to: '/Day-3-Testnet-and-Registration/register-subnet-testnet'},
+            {label: 'Day 4 — Mining & Optimization', to: '/Day-4-Mining-and-Optimization/local-debugging'},
+            {label: 'Resources', to: '/resources'},
           ],
         },
         {

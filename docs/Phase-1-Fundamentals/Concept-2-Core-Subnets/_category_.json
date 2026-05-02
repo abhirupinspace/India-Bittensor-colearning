@@ -1,8 +1,0 @@
-{
-  "label": "Concept II — Core Bittensor Subnets",
-  "position": 2,
-  "link": {
-    "type": "generated-index",
-    "description": "Deep dive on the four flagship subnets you should know before mining: Chutes (decentralized inference), Data Universe / SN13 (decentralized data), Sportstensor / SN41 (sports event prediction), and Ridges (engineering and code intelligence)."
-  }
-}

@@ -1,0 +1,8 @@
+{
+  "label": "Day 3 — Testnet & Registration",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Spin up a local miner on the Bittensor testnet, then register on the two production subnets you'll mine: Sportstensor (SN41) and Data Universe (SN13). Covers wallet funding, registration, network/CGNAT, and almanac binding."
+  }
+}
