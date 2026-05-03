@@ -117,6 +117,10 @@ Whitepaper, Taostats, official repos, YouTube, faucet, glossary — everything y
 
 **Ready?** Continue to [Day 1 — What is Web3?](./Day-1-Foundations/what-is-web3)
 
+:::tip In a hurry? Skip the theory.
+The **[One-Shot Guide](./one-shot)** is a copy-paste path: fresh laptop → testnet miner → SN41 + SN13 mainnet, commands only. Use it if you want to ship first and read later.
+:::
+
 ---
 
 ### Quick References

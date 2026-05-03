@@ -89,6 +89,7 @@ const config: Config = {
             {label: 'Day 2 — Tooling & Ecosystem', to: '/Day-2-Tooling-and-Ecosystem/intro-and-hardware-check'},
             {label: 'Day 3 — Testnet & Registration', to: '/Day-3-Testnet-and-Registration/register-subnet-testnet'},
             {label: 'Day 4 — Mining & Optimization', to: '/Day-4-Mining-and-Optimization/local-debugging'},
+            {label: 'One-Shot Guide', to: '/one-shot'},
             {label: 'Resources', to: '/resources'},
           ],
         },
