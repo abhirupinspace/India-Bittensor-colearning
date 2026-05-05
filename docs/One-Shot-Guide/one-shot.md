@@ -39,9 +39,7 @@ sudo apt update && sudo apt install -y python3.11 python3.11-venv build-essentia
 ## 2. Install btcli
 
 ```bash
-python3.11 -m venv ~/bittensor-env
-source ~/bittensor-env/bin/activate
-pip install --upgrade pip bittensor-cli
+pip install bittensor-cli
 
 btcli --version    # expect: BTCLI version: 9.x.x
 ```
