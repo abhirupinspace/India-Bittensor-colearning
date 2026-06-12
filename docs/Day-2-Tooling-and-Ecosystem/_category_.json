@@ -1,8 +1,0 @@
-{
-  "label": "Day 2 — Tooling & Ecosystem",
-  "position": 2,
-  "link": {
-    "type": "generated-index",
-    "description": "Get hands-on with btcli, environment requirements, and wallets (coldkey + hotkey). Tour the core subnets you can mine on: Chutes, Data Universe (SN13), Sportstensor (SN41), and Ridges."
-  }
-}

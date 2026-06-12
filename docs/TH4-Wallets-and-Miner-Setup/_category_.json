@@ -1,0 +1,8 @@
+{
+  "label": "TH4 — Wallets & Miner Setup",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Hands-on setup: install dependencies, set up the Bittensor SDK, create your wallets, understand registration, learn the miner architecture, and get everything ready for mining."
+  }
+}

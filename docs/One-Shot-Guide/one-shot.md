@@ -132,4 +132,4 @@ Balance: 10.0000 τ ➡ 9.9992 τ
 - Verify `--netuid 172` + `--network test` before pressing `y` — fees are non-refundable
 - Crash? Re-run §5 — most failures are wrong netuid or empty wallet
 
-Stuck? → [Day 2 — Wallet Setup](../Day-2-Tooling-and-Ecosystem/wallet-setup) · [Day 3 — Register Miner](../Day-3-Testnet-and-Registration/register-miner) · [Resources](/resources)
+Stuck? → [Creating Wallets](/TH4-Wallets-and-Miner-Setup/creating-wallets) · [Registering a Miner](/TH5-Running-a-Miner/registering-a-miner) · [Resources](/resources)

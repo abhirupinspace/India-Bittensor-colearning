@@ -1,0 +1,8 @@
+{
+  "label": "TH1 — Foundations & Introduction",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Start from zero: Web3, AI vs decentralized AI, what Bittensor is, an ecosystem overview, and how miners, validators, and subnets fit together. Closes with the program structure and your learning track & quests."
+  }
+}

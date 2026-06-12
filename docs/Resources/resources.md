@@ -62,7 +62,7 @@ Official channels for governance updates, new subnet launches, and announcements
 
 Source code for popular subnets. Fork + study to understand internals & find contribution ideas.
 
-### Phase 2 Curriculum Subnets
+### Camp Curriculum Subnets
 
 | Subnet | Repo | Topic |
 |--------|------|-------|

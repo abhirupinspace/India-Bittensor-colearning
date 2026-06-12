@@ -1,0 +1,8 @@
+{
+  "label": "TH2 — Tooling & Ecosystem",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "The economics and tooling layer: TAO tokenomics, Dynamic TAO, wallets (coldkeys & hotkeys), an introduction to btcli, the network structure, and how incentives are distributed across the network."
+  }
+}
