@@ -1,6 +1,6 @@
 ---
 title: 'One-Shot Guide: Zero to SN41 Miner Registered'
-description: 'Copy-paste path: install → wallet → testnet TAO → register on Sportstensor testnet (netuid 172). Commands only.'
+description: 'Copy-paste path: install → wallet → testnet TAO → register on Sportstensor testnet (netuid 41). Commands only.'
 slug: /one-shot
 ---
 
@@ -44,6 +44,10 @@ pip install bittensor-cli
 btcli --version    # expect: BTCLI version: 9.x.x
 ```
 
+:::tip Use a recent btcli (≥ 9.22)
+The SN41 testnet runs a newer chain runtime. Older btcli (e.g. 9.17) fails on testnet reads with `Storage function "Swap.AlphaSqrtPrice" not found`. If you hit that, upgrade: `pip install -U bittensor-cli` (or `brew upgrade btcli`).
+:::
+
 ## 3. Create coldkey + hotkey
 
 ```bash
@@ -81,11 +85,15 @@ btcli wallet balance --wallet-name my_first_coldkey --network test
 
 Expect a non-zero `τ` balance.
 
-## 5. Register on SN41 testnet (netuid 172)
+:::note If balance errors on testnet
+On current testnet, `wallet balance` / `wallet overview` may fail with `Storage function "Swap.AlphaSqrtPrice" not found` even on a recent btcli — it's a chain-side issue, not your wallet. **You can ignore it:** §5's register step prints `Your balance is: …` before it charges, so you'll see your balance there.
+:::
+
+## 5. Register on SN41 testnet (netuid 41)
 
 ```bash
 btcli subnet register \
-  --netuid 172 \
+  --netuid 41 \
   --wallet.name my_first_coldkey \
   --wallet.hotkey my_first_hotkey \
   --network test
@@ -95,22 +103,24 @@ Confirm prompt with `y`, then enter coldkey password.
 
 **Success output:**
 ```
-✅ Your extrinsic has been included as 6190523-9
-Balance: 10.0000 τ ➡ 9.9992 τ
-✅ Registered on netuid 172 with UID <N>
+✅ Your extrinsic has been included as 7420389-7
+Balance: 10.0000 τ ➡ 9.9929 τ
+✅ Registered on netuid 41 with UID <N>
 ```
 
 **Example — what your terminal should look like:**
 
 <img
-  src={useBaseUrl('/img/one-shot/registered-uid-50.png')}
-  alt="btcli subnet register output showing UID 50 on netuid 172"
+  src={useBaseUrl('/img/one-shot/registered-example.jpeg')}
+  alt="btcli subnet register success output ending in ✅ Registered with a UID"
   style={{maxWidth: '100%', borderRadius: 6, border: '1px solid #DBDDE1'}}
 />
 
-**Screenshot this terminal now** — it contains hotkey, coldkey, netuid 172, UID, and `✅ Registered`. That's your submission proof.
+<small>_Example run on testnet (shown here on netuid 13) — the flow is identical for `--netuid 41`: confirm `y` → password → `✅ Registered … with UID <N>`._</small>
 
-> Mainnet instead? Drop `--network test` and use `--netuid 41`. Costs real TAO.
+**Screenshot this terminal now** — it contains hotkey, coldkey, netuid 41, UID, and `✅ Registered`. That's your submission proof.
+
+> Mainnet instead? SN41 is **netuid 41 on both** testnet and mainnet — the only difference is the network flag. Drop `--network test` to use mainnet. Costs real TAO.
 
 ---
 
@@ -119,8 +129,8 @@ Balance: 10.0000 τ ➡ 9.9992 τ
 | # | Field | Source |
 |---|---|---|
 | 1 | **Hotkey Address** | `btcli wallet list` → hotkey SS58 |
-| 2 | **Subnet ID / NetUID** | `172` (testnet) — or `41` (mainnet) |
-| 3 | **Miner UID** | from §5 output (`Registered on netuid 172 with UID <N>`) — or `btcli neuron list --netuid 172 --network test` |
+| 2 | **Subnet ID / NetUID** | `41` (testnet, with `--network test`) — or `41` (mainnet) |
+| 3 | **Miner UID** | from §5 output (`Registered on netuid 41 with UID <N>`) — or `btcli subnet metagraph --netuid 41 --network test` |
 | 4 | **Miner Screenshot** | the §5 registration output (covers hotkey + netuid + UID + ✅) |
 | 5 | **X Post** | tag `@HackQuest_` `@HackQuestIN` `@bittensor` |
 
@@ -129,7 +139,7 @@ Balance: 10.0000 τ ➡ 9.9992 τ
 ## Pro tips
 
 - Use **coldkey** (not hotkey) for the faucet
-- Verify `--netuid 172` + `--network test` before pressing `y` — fees are non-refundable
-- Crash? Re-run §5 — most failures are wrong netuid or empty wallet
+- Verify `--netuid 41` + `--network test` before pressing `y` — fees are non-refundable
+- Crash? Re-run §5 — most failures are wrong netuid, stale btcli, or empty wallet
 
 Stuck? → [Creating Wallets](/TH4-Wallets-and-Miner-Setup/creating-wallets) · [Registering a Miner](/TH5-Running-a-Miner/registering-a-miner) · [Resources](/resources)

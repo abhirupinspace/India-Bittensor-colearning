@@ -74,10 +74,10 @@ This number is **fluctuating per block** (every ~12 seconds). If it's high right
 
 ### Testnet
 
-The Sportstensor testnet typically uses a different netuid (often **netuid 199** or per the team's announcement: **check the official Sportstensor documentation** for confirmation).
+The Sportstensor testnet currently uses **netuid 41** (it previously ran on netuid 172, now full/retired). If registration says the subnet doesn't exist, confirm the current testnet netuid via `btcli subnet list --subtensor.network test` or the official Sportstensor docs.
 
 ```bash
-btcli subnet burn_cost --netuid <TESTNET_NETUID> --subtensor.network test
+btcli subnet burn_cost --netuid 41 --subtensor.network test
 ```
 
 :::tip View All Subnets + Prices
@@ -114,7 +114,7 @@ btcli subnet register \
 
 ```bash
 btcli subnet register \
-  --netuid <TESTNET_NETUID> \
+  --netuid 41 \
   --wallet.name sn41_miner \
   --wallet.hotkey miner_01 \
   --subtensor.network test

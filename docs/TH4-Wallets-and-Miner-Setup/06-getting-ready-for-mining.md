@@ -229,7 +229,11 @@ btcli wallet overview \
 The testnet TAO (τ) balance will appear on the coldkey.
 
 :::tip Faucet Sometimes Disabled
-If the faucet is rate-limited or disabled, ask in the **Bittensor Discord** `#testnet-faucet` channel or try again a few hours later.
+If the faucet is rate-limited or disabled, ask in the **Bittensor Discord** `#testnet-faucet` channel or try again a few hours later. As a web alternative, paste your **coldkey SS58** at `https://app.minersunion.ai/testnet-faucet`.
+:::
+
+:::note Testnet balance/overview may error
+On the current testnet runtime, `btcli wallet overview` / `wallet balance` with `--subtensor.network test` can fail with `Storage function "Swap.AlphaSqrtPrice" not found`. This is a chain-side runtime skew, not a wallet problem — make sure you're on **btcli ≥ 9.22** first. If it persists, confirm your balance from the `Your balance is: …` line that the **registration** step prints (TH5) before it charges.
 :::
 
 ### Option B: Mainnet (Buy From an Exchange)
@@ -290,7 +294,7 @@ btcli wallet balance --wallet.name sn41_miner
 
 | Check | Expected | If Failed |
 |---|---|---|
-| `btcli --version` | `8.x.x` shows | Re-install, make sure venv active |
+| `btcli --version` | `9.x.x` shows (≥ 9.22 for testnet) | Re-install / upgrade (`pip install -U bittensor-cli`), make sure venv active |
 | `btcli wallet list` | Coldkey + hotkey appear | Re-run steps 2 & 3 |
 | Coldkey balance ≥ 1.5 TAO (mainnet) | Balance shows | Add deposit from exchange |
 | Balance ≥ 5 test-τ (testnet) | Balance shows | Re-run the faucet |
