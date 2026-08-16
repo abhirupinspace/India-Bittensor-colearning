@@ -261,7 +261,7 @@ We deep-dive dTAO in the Tokenomics material.
 
 - **100+ active subnets** with real use cases
 - **TAO entered the top-30 cryptocurrencies** by market cap
-- **Real revenue** is starting to flow: Sportstensor from sports betting, Chutes from AI API sales, other subnets from enterprise contracts
+- **Real revenue** is starting to flow: Chutes from AI API sales, data subnets from licensing, others from enterprise contracts
 - **Global developer adoption** is accelerating, including in Asia and emerging markets
 
 ---
@@ -316,7 +316,7 @@ Now you know **why Bittensor exists**. Next, we get into **how Bittensor works**
 - **Next:** Miners, Validators & Subnets: deep dive on subnets, miners, validators, and the roles inside each subnet
 - **After that:** Network Structure, Understanding Incentives, Tooling & Tokenomics: the metagraph, Subtensor, Yuma Consensus, `btcli`, TAO, dTAO/alpha, emission schedule, the Chrome Extension wallet
 
-Later, we dissect the core subnets: Chutes, Data Universe, Sportstensor, Ridges.
+Later, we dissect the core subnets: Data Universe, Chutes, Ridges.
 
 ---
 
@@ -355,6 +355,6 @@ Ready for the technical material?
 
 - [Bittensor Whitepaper: Yuma Rao 2020](https://bittensor.com/whitepaper)
 - ["Attention Is All You Need": Vaswani et al. 2017](https://arxiv.org/abs/1706.03762)
-- [ImageNet 2012 Paper (AlexNet)](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b)
+- [ImageNet 2012 Paper (AlexNet)](https://proceedings.neurips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)
 - [State of AI Report 2024: Nathan Benaich](https://www.stateof.ai/)
 - Foundations recap: [AI vs Decentralized AI](/TH1-Foundations-and-Introduction/ai-vs-decentralized-ai)

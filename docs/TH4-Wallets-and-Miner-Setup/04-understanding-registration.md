@@ -18,7 +18,7 @@ By the end of this page you will:
 
 :::note Prerequisites
 - ✅ [Wallet Setup](/TH4-Wallets-and-Miner-Setup/creating-wallets) complete: wallet & hotkey ready, testnet TAO available
-- ✅ venv active: `source ~/bittensor-env/bin/activate`
+- ✅ venv active: `source ~/.venvs/bt/bin/activate`
 - ✅ Stable internet connection
 :::
 
@@ -29,7 +29,7 @@ By the end of this page you will:
 Before registering, set the default network to testnet so all btcli commands automatically use the testnet:
 
 ```bash
-btcli config set --network test
+btcli config set network test
 ```
 
 Verify the configuration:
@@ -56,7 +56,7 @@ btcli subnets list --network test
 The output shows a table of all active subnets on testnet. Look for **NetUID 1**: this is the Bittensor development/learning subnet.
 
 :::note Registration Cost
-The registration cost on existing subnets (TAO recycle) will be displayed automatically when you run `btcli subnet register` in Step 2: btcli will ask for confirmation showing the cost number before continuing.
+The registration cost on existing subnets (TAO recycle) will be displayed automatically when you run `btcli subnets register` in Step 2: btcli will ask for confirmation showing the cost number before continuing.
 :::
 
 ---
@@ -80,7 +80,7 @@ Wallets
 If the hotkey is missing, create it first:
 
 ```bash
-btcli wallet new_hotkey --wallet-name mywallet --hotkey miner1
+btcli wallet new-hotkey -w mywallet -H miner1
 ```
 
 :::warning Match the Hotkey Name
@@ -92,10 +92,10 @@ If your hotkey has a **different** name (e.g., `miner_testnet`), replace `miner1
 ## Register the Miner (TAO Burn)
 
 ```bash
-btcli subnet register \
+btcli subnets register \
   --netuid 1 \
-  --wallet-name mywallet \
-  --hotkey miner1 \
+  -w mywallet \
+  -H miner1 \
   --network test
 ```
 
@@ -119,7 +119,7 @@ Type `y` and press Enter. Wait a few seconds until the confirmation appears.
 Note your **UID**: this number is your miner's slot in the subnet.
 
 :::warning POW Registration Is Not Available on NetUID 1
-`btcli subnet pow_register` cannot be used on NetUID 1 because **POW is permanently disabled** by this subnet's operator. The only way to register on NetUID 1 is via TAO burn.
+PoW registration cannot be used on NetUID 1 because **PoW is permanently disabled** by this subnet's operator. The only way to register on NetUID 1 is via TAO burn. (Bittensor 11 dropped the separate `pow_register` command entirely — `btcli subnets register` is burn-based.)
 
 Make sure you have testnet TAO from the faucet before continuing (see the wallet setup page).
 :::
@@ -131,7 +131,7 @@ Make sure you have testnet TAO from the faucet before continuing (see the wallet
 After registering, verify by viewing the metagraph:
 
 ```bash
-btcli subnets metagraph --netuid 1 --network test
+btcli subnets metagraph 1 --network test
 ```
 
 The output shows a table of every miner on the subnet. Find your UID:
@@ -148,7 +148,7 @@ Metagraph for subnet 1 (test)
 Or check via wallet overview:
 
 ```bash
-btcli wallet overview --wallet-name mywallet --network test
+btcli wallet overview -w mywallet --network test
 ```
 
 ---
@@ -172,7 +172,7 @@ On testnet, the immunity period is shorter and the consequences of deregistratio
 ```mermaid
 flowchart TD
     START[Start Registration] --> FAUCET[Make sure you have<br/>testnet TAO from the faucet]
-    FAUCET --> REGISTER[btcli subnet register<br/>--netuid 1 --network test]
+    FAUCET --> REGISTER[btcli subnets register<br/>--netuid 1 --network test]
     REGISTER --> CONFIRM[Confirm cost<br/>type 'y']
     CONFIRM --> SUCCESS[Get UID ✅]
     SUCCESS --> VERIFY[btcli subnets metagraph<br/>--netuid 1 --network test]
@@ -191,8 +191,8 @@ flowchart TD
 | `Insufficient balance for registration` | Not enough testnet TAO | Request more from the faucet (wallet setup) |
 | `Hotkey already registered` | The hotkey already has a UID on this subnet | Check with `btcli wallet overview --network test` |
 | `Subnet does not exist` | Wrong NetUID or subnet not active yet | Check `btcli subnets list --network test` |
-| `hotkey 'miner1' does not exist` | Hotkey not created or wrong name | Run `btcli wallet list` to see existing hotkey names, then create: `btcli wallet new_hotkey --wallet-name mywallet --hotkey miner1` |
-| `No such option: --wallet.name` | Using the old flag | Use `--wallet-name` (with a hyphen) |
+| `hotkey 'miner1' does not exist` | Hotkey not created or wrong name | Run `btcli wallet list` to see existing hotkey names, then create: `btcli wallet new-hotkey -w mywallet -H miner1` |
+| `No such option: --wallet.name` | Using v9 btcli syntax | btcli v11 uses `-w` / `--wallet` (see the [btcli page](/TH2-Tooling-and-Ecosystem/introduction-to-btcli)) |
 | `Connection refused` / `Timeout` | Testnet subtensor is down | Try again in 5–10 minutes |
 | UID doesn't appear in metagraph | Chain needs a few blocks | Wait 2–5 minutes, the sync isn't done yet |
 
@@ -201,14 +201,15 @@ flowchart TD
 ## Summary
 
 - **NetUID 1 testnet** = Bittensor learning subnet
-- Register via **TAO burn**: `btcli subnet register --netuid 1 --wallet-name mywallet --hotkey miner1 --network test`
+- Register via **TAO burn**: `btcli subnets register --netuid 1 -w mywallet -H miner1 -n test`
 - **POW registration is disabled** on NetUID 1: testnet TAO is required
 - After registering → you get a **UID**, visible in the metagraph
-- btcli flags use **hyphens**: `--wallet-name`, `--hotkey`, `--network` (not dots)
+- **btcli v11** flags are short and hyphenated: `-w`, `-H`, `-n`. **Miner scripts** still use the
+  older dotted argparse style: `--wallet.name`, `--wallet.hotkey`. Different tools, different SDK majors.
 
 ### ✅ Quick Check
 
-1. What's the difference between the `--wallet-name` flag (btcli) and `--wallet.name` (miner.py)?
+1. What's the difference between `-w` (btcli) and `--wallet.name` (miner.py)?
 2. Why use `--network test` instead of running without the flag?
 3. What is the immunity period and why does it matter?
 4. How do you verify the registration succeeded?
@@ -216,10 +217,10 @@ flowchart TD
 <details>
 <summary> Answers</summary>
 
-1. **`--wallet-name`** is a btcli flag (CLI tool). **`--wallet.name`** is the flag used when running Python scripts like `neurons/miner.py`: they're different tools with different flag conventions.
+1. **`-w` / `--wallet`** is a **btcli v11** flag. **`--wallet.name`** is the flag used when running Python scripts like `neurons/miner.py`, which run on the older pinned SDK (`bittensor==10.3.0`). They're different programs on different SDK majors — the mismatch is expected, not a typo.
 2. **`--network test`** = use the Bittensor testnet (sandbox, TAO has no real value). Without the flag, btcli defaults to `finney` (mainnet) using real TAO.
 3. **Immunity period** = the grace period after registration (~24 hours on mainnet), during which the miner cannot be deregistered even with a score of 0. Important so you have time to set up.
-4. `btcli subnets metagraph --netuid 1 --network test`: find your UID in the table. Or `btcli wallet overview --wallet-name mywallet --network test`.
+4. `btcli subnets metagraph 1 --network test`: find your UID in the table. Or `btcli wallet overview -w mywallet --network test`.
 
 </details>
 

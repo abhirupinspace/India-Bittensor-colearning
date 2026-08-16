@@ -1,6 +1,6 @@
 ---
 title: 'SN13: Scraping Strategy'
-sidebar_position: 8
+sidebar_position: 4
 description: 'Set up the Reddit/Twitter/YouTube scrapers in your Data Universe miner: config.json, API keys, deduplication logic, rate limiting, and how to choose subreddits/keywords that score highly on SN13.'
 ---
 

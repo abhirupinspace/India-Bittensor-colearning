@@ -78,23 +78,43 @@ The **metagraph** is a complete representation of a subnet's state at a point in
 Using `btcli`:
 
 ```bash
-btcli subnet metagraph --netuid 13
+btcli subnets metagraph 13
 ```
 
-Or in Python:
+Or in Python (Bittensor 11):
 
 ```python
 import bittensor as bt
-metagraph = bt.metagraph(netuid=13)
-print(metagraph.ranks)       # [0.8, 0.5, 0.3, ...]
-print(metagraph.incentive)   # [0.4, 0.1, ...]
+
+sub = bt.Subtensor()                          # finney is the default network
+mg = sub.subnets.metagraph(netuid=13)
+
+for n in mg:
+    print(n.uid, n.incentive, n.trust, n.emission)
 ```
+
+:::warning The metagraph API changed in v11
+In SDK v10 and earlier the metagraph exposed parallel **arrays** — `mg.S`, `mg.I`, `mg.R`,
+`mg.W` — and you indexed them by UID. In v11 the metagraph is a **collection of neuron objects**
+with named fields:
+
+| v10 | v11 |
+|---|---|
+| `bt.metagraph(netuid=13)` | `sub.subnets.metagraph(netuid=13)` |
+| `mg.S[uid]` (stake array) | `mg.neuron(uid).total_stake` |
+| `mg.I`, `mg.R`, `mg.D` | `n.incentive`, `n.rank`, `n.dividends` per neuron |
+| `mg.W` / `mg.B` (matrices) | `sub.weights.weights(netuid=…)` / `.bonds(…)` |
+| `mg.sync(block=…)` | refetch: `sub.subnets.metagraph(13, block=…)` |
+
+You'll still see the array style in subnet miner repos that pin the older SDK — including SN13.
+That code is correct for **its** environment; just don't mix the two styles.
+:::
 
 :::tip Metagraph = Ground Truth
 If you're a miner and you're not sure whether your performance is good, **read the metagraph**. Check:
-- `incentive[my_uid]`: your current reward share
-- `trust[my_uid]`: how much validators trust you
-- `emission[my_uid]`: your TAO per block
+- `incentive`: your current reward share
+- `trust`: how much validators trust you
+- `emission`: your TAO per block
 
 Most miner optimization decisions are made off metagraph data.
 :::
@@ -152,5 +172,5 @@ You know what the network looks like. Next: **how the rewards are calculated** �
 
 ### Additional References
 
-- [Metagraph Reference](https://docs.bittensor.com/reference/metagraph)
-- [Bittensor Docs: Subnet Architecture](https://docs.bittensor.com/subnets/understanding-subnets)
+- [Metagraph Reference](https://www.bittensor.com/docs/concepts/network)
+- [Bittensor Docs: Subnet Architecture](https://www.bittensor.com/docs/concepts/network)

@@ -1,12 +1,12 @@
 ---
 title: 'Other Notable Subnets'
 description: 'Two more subnets worth understanding: Chutes (decentralized LLM inference) and Ridges (decentralized code intelligence). How their miners and validators work, how they compare to centralized products, and where they fit in the wider Bittensor landscape of 100+ subnets.'
-sidebar_position: 4
+sidebar_position: 3
 ---
 
 # Other Notable Subnets
 
-You now understand the two subnets you'll actually build miners for: **SN13 (data)** and **SN41 (prediction)**. But Bittensor is far larger than those two. This page covers two more high-signal subnets worth knowing: **Chutes** (decentralized inference) and **Ridges** (code intelligence): then points you to the wider landscape of 100+ subnets.
+You now understand the subnet you'll actually build a miner for: **SN13 (data)**. But Bittensor is far larger than that. This page covers two more high-signal subnets worth knowing: **Chutes** (decentralized inference) and **Ridges** (code intelligence): then points you to the wider landscape of 100+ subnets.
 
 :::info What You'll Learn
 By the end of this page you will be able to:
@@ -156,9 +156,9 @@ Chutes is **not** one of the subnets we'll build a miner for hands-on. Why?
 
 1. **High cost barrier**: not every participant has an H100.
 2. **Tech complexity**: tuning vLLM for competitive latency takes experience.
-3. **The camp's goal is** to get you a **first miner running**: not the most profitable miner. For that, **SN41 (Sportstensor)** and **SN13 (Data Universe)** are far more suitable as entry points.
+3. **The camp's goal is** to get you a **first miner running**: not the most profitable miner. For that, **SN13 (Data Universe)** is far more suitable as an entry point.
 
-But understanding Chutes still matters because it's a **showcase** of what Bittensor can achieve when inference is decentralized, and many of its scoring concepts (latency, correctness) reappear in SN41 (prediction correctness + latency). If you upgrade to enterprise GPUs after the camp, you can come back to Chutes.
+But understanding Chutes still matters because it's a **showcase** of what Bittensor can achieve when inference is decentralized, and its scoring concepts (latency, correctness) reappear across many subnets. If you upgrade to enterprise GPUs after the camp, you can come back to Chutes.
 
 ---
 
@@ -341,7 +341,7 @@ Ridges is **not** one of the subnets we build a miner for hands-on. Why?
 
 1. **Cost barrier**: LLM API credits can be expensive for beginner participants.
 2. **Skill barrier**: agent design takes experience that not every participant has.
-3. **Camp scope**: the program focuses on two beginner-sustainable mining subnets (SN41 + SN13).
+3. **Camp scope**: the program focuses on one beginner-sustainable mining subnet (SN13).
 
 But Ridges is still explained here because it's one of the **most technically interesting subnets** on Bittensor, and the **sandbox verification + test-based scoring** pattern reappears across many other subnets. After you graduate, software engineers who enjoy AI coding agents may move on to Ridges next: so knowing the landscape matters.
 
@@ -363,7 +363,7 @@ To explore the full ecosystem:
 
 1. **Chutes = decentralized LLM inference.** Miners provide GPUs, validators score quality and latency, users gain access to open-source models via the gateway. Cheaper for open models, censorship-resistant; trades off SLA and consistency.
 2. **Ridges = decentralized code intelligence.** Miners are AI engineering agents, validators verify via SWE-bench-style test execution. Permissionless, diverse models, pay-per-task.
-3. **Neither is a hands-on subnet for this camp**: both have higher cost/skill barriers than SN13 and SN41.
+3. **Neither is a hands-on subnet for this camp**: both have higher cost/skill barriers than SN13.
 4. **The shared pattern**: miners produce, validators verify, Yuma Consensus distributes: across all 100+ subnets.
 5. **Explore more** via the Resources page and Taostats.
 
@@ -371,7 +371,7 @@ To explore the full ecosystem:
 
 ### Further Reading
 
-- [Bittensor Official Docs](https://docs.bittensor.com): official documentation
+- [Bittensor Official Docs](https://www.bittensor.com/docs): official documentation
 - [Taostats: Subnet Explorer](https://taostats.io): browse every live subnet, NetUID, ranking, and emission
 - [vLLM](https://github.com/vllm-project/vllm) · [SGLang](https://github.com/sgl-project/sglang): common inference engines for Chutes miners
 - [Ridges AI](https://ridges.ai): Ridges subnet homepage

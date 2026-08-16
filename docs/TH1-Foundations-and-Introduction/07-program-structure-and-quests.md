@@ -1,12 +1,12 @@
 ---
 title: 'Program Structure, Learning Track & Quests'
 sidebar_position: 7
-description: 'How the HackQuest × Bittensor Co-Learning Camp #21 India is structured: six Townhalls, the learning track, hands-on quests and submissions, and how to progress.'
+description: 'How the HackQuest × Bittensor Co-Learning Camp #23 India is structured: six Townhalls, the learning track, hands-on quests and submissions, and how to progress.'
 ---
 
 # Program Structure, Learning Track & Quests
 
-> A quick map of how the **HackQuest × Bittensor Co-Learning Camp #21 India** is organized, so you always know where you are and what to do next.
+> A quick map of how the **HackQuest × Bittensor Co-Learning Camp #23 India** is organized, so you always know where you are and what to do next.
 
 ## The 6 Townhalls
 
@@ -16,7 +16,7 @@ The camp runs as **six Townhalls (TH1 → TH6)**:
 - **TH2 — Tooling & Ecosystem**: network structure, incentives, btcli, tokenomics
 - **TH3 — Core Subnets**: the subnets you'll actually work with
 - **TH4 — Building**: local mining and your first real miner
-- **TH5 — Guided Projects**: shipping miners on live subnets (Sportstensor, Data Universe)
+- **TH5 — Guided Projects**: shipping a miner on a live subnet (Data Universe, SN13)
 - **TH6 — Graduation**: final submission, next steps, and joining the community
 
 ## Learning Track

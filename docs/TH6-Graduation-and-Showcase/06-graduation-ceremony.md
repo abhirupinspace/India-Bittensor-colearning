@@ -1,12 +1,12 @@
 ---
 title: 'Graduation Ceremony'
 sidebar_position: 6
-description: 'The closing of the HackQuest × Bittensor Co-Learning Camp #21 India — certificates, recognition, and thank-yous.'
+description: 'The closing of the HackQuest × Bittensor Co-Learning Camp #23 India — certificates, recognition, and thank-yous.'
 ---
 
 # Graduation Ceremony
 
-The closing of the **HackQuest × Bittensor Co-Learning Camp #21 India**. This is where we recognize what everyone built and send you off as a Bittensor builder.
+The closing of the **HackQuest × Bittensor Co-Learning Camp #23 India**. This is where we recognize what everyone built and send you off as a Bittensor builder.
 
 ## What Happens
 
@@ -18,7 +18,7 @@ The closing of the **HackQuest × Bittensor Co-Learning Camp #21 India**. This i
 ## Your Certificate
 
 - Issued once your submission is **validated** (registered hotkey + UID + running-miner evidence + write-up)
-- Marks you as a graduate of Co-Learning Camp #21 — proof you took a miner from zero to running on a live subnet
+- Marks you as a graduate of Co-Learning Camp #23 — proof you took a miner from zero to running on a live subnet
 - Bring it to grant applications, subnet teams, and the alumni network
 
 ## In Builders We Trust

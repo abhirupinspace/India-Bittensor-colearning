@@ -40,7 +40,7 @@ An economic upgrade: each subnet now has its own "alpha token" priced by the mar
 ### 2025–2026: Mature Ecosystem
 - 100+ active subnets
 - TAO entered the **top-30 cryptocurrencies** by market cap
-- Real revenue is starting to flow: Sportstensor generates revenue from sports betting, Chutes from AI API sales, etc.
+- Real revenue is starting to flow: Chutes from AI API sales, prediction subnets from market-making, etc.
 - Global developer adoption is rising sharply
 
 ---
@@ -141,7 +141,7 @@ In 2020–2022, running a Bittensor miner meant dealing with thin docs, buggy to
 Even though it's a top-30 cryptocurrency, Bittensor is still **pre-chasm** compared to Ethereum or Solana, both of which are mainstream. Active developers number in the **thousands, not hundreds of thousands**. **Skill arbitrage:** Bittensor skills today = scarce skills that will be at a premium in 2–3 years.
 
 ### 3. **Real Revenue Is Starting to Flow**
-Subnets like Sportstensor (SN41) already generate **USD revenue** from sports-betting integrations and use it for TAO buybacks. This is no longer a token with empty tokenomics: there's a **real business model** behind it. The more subnets that produce revenue, the more stable the ecosystem becomes.
+Several subnets already generate **real USD revenue** — from AI API sales, data licensing, and prediction-market products — and some route it into TAO buybacks. This is no longer a token with empty tokenomics: there's a **real business model** behind it. The more subnets that produce revenue, the more stable the ecosystem becomes.
 
 ---
 
@@ -161,7 +161,7 @@ Subnets like Sportstensor (SN41) already generate **USD revenue** from sports-be
 
 | Opportunity | Your Goal |
 |-------------|-----------|
-| **Become a Sportstensor miner** | Passive TAO income from sports prediction |
+| **Become a Data Universe miner** | TAO emissions for scraping and serving fresh data |
 | **Become a Data Universe miner** | TAO from scraping Twitter/Reddit data |
 | **Become a subnet builder** | Build a new subnet (e.g., a region-specific dataset) |
 | **Become a validator** | Mid-term goal: once you have skill and TAO stake |
@@ -175,11 +175,11 @@ From here, you'll move into the more technical material:
 
 ### Fundamentals (Theory)
 - Detailed history, full architecture, tokenomics, dTAO
-- Deep dive on the core subnets: Chutes, Data Universe, Sportstensor, Ridges
+- Deep dive on the core subnets: Data Universe, Chutes, Ridges
 
 ### Building (Practice)
 - A local mining intro that prepares you for any subnet
-- Set up and run a miner on Sportstensor (SN41)
+- Set up and run a miner on Data Universe (SN13)
 - Set up and run a miner on Data Universe (SN13)
 
 ### Resources

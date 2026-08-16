@@ -1,6 +1,6 @@
 ---
 title: 'What Are Subnets?'
-description: 'A subnet is a specialized, incentivized market on Bittensor identified by a NetUID. Each has an owner, miners who produce work, and validators who score it. An orientation to the subnet model before the SN13, SN41, Chutes, and Ridges deep-dives.'
+description: 'A subnet is a specialized, incentivized market on Bittensor identified by a NetUID. Each has an owner, miners who produce work, and validators who score it. An orientation to the subnet model before the SN13, Chutes, and Ridges deep-dives.'
 sidebar_position: 1
 ---
 
@@ -25,8 +25,8 @@ For a refresher on how these roles interact mechanically, see the **Miners, Vali
 Each subnet picks a niche and competes to be the best decentralized market for it:
 
 - **Data** — gathering fresh training data (e.g. SN13 / Data Universe)
-- **Prediction** — forecasting real-world outcomes (e.g. SN41 / Sportstensor)
+- **Prediction** — forecasting real-world outcomes (e.g. SN41 / Almanac)
 - **Inference** — serving LLM responses on demand (e.g. Chutes)
 - **Code intelligence** — solving engineering tasks (e.g. Ridges)
 
-The next pages dive into each of these. Start with **[SN13: Data Universe](/TH3-Core-Subnets-and-Opportunities/sn13-data-universe)** and **[SN41: Sportstensor](/TH3-Core-Subnets-and-Opportunities/sn41-sportstensor)**: the two subnets you'll build miners for hands-on.
+The next pages dive into each of these. Start with **[SN13: Data Universe](/TH3-Core-Subnets-and-Opportunities/sn13-data-universe)**: the subnet you'll build a miner for hands-on in TH4 and TH5.

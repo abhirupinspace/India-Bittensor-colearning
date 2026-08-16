@@ -20,9 +20,9 @@ The canonical sources: the absolute source of truth for Bittensor architecture &
 
 | Resource | URL | Description |
 |----------|-----|-------------|
-|  **Bittensor Docs** | [docs.bittensor.com](https://docs.bittensor.com) | Official documentation: install, btcli, Python SDK, Yuma Consensus, subnet creation |
+|  **Bittensor Docs** | [bittensor.com/docs](https://www.bittensor.com/docs) | Official docs for **Bittensor 11**: quickstart, SDK, transactions, queries, errors, and the v9/v10 → v11 migration guide |
 |  **Whitepaper v2** | [bittensor.com/whitepaper](https://bittensor.com/whitepaper) | Academic paper: incentive mechanism, Yuma consensus math, TAO tokenomics |
-|  **Bittensor Python SDK** | [github.com/opentensor/bittensor](https://github.com/opentensor/bittensor) | SDK source code: useful when debugging SDK errors |
+|  **Bittensor Python SDK** | [github.com/RaoFoundation/subtensor](https://github.com/RaoFoundation/subtensor) | SDK source code: useful when debugging SDK errors |
 |  **Subtensor Chain** | [github.com/opentensor/subtensor](https://github.com/opentensor/subtensor) | Blockchain layer source (Substrate-based) |
 
 ---
@@ -37,8 +37,7 @@ For monitoring subnets, miners, validators, and tokenomics in real time.
 |  **TaoMarketCap** | [taomarketcap.com](https://taomarketcap.com) | TAO + subnet token price tracker (after dynamic TAO launch) |
 |  **Polkadot.js Apps** | [polkadot.js.org/apps](https://polkadot.js.org/apps/?rpc=wss://entrypoint-finney.opentensor.ai) | Raw chain explorer: inspect blocks, extrinsics, storage |
 |  **Subnet Dashboard** | [bittensor.com/scan](https://bittensor.com/scan) | Official subnet overview from OTF |
-|  **Data Universe Dashboard** | [data-universe.macrocosmos.ai](https://data-universe.macrocosmos.ai) | SN13-specific miner leaderboard & freshness stats |
-|  **Sportstensor Dashboard** | [sportstensor.com](https://sportstensor.com) | SN41-specific: miner accuracy leaderboard |
+|  **Data Universe Dashboard** | [macrocosmos.ai](https://www.macrocosmos.ai) | SN13-specific miner leaderboard & freshness stats |
 
 ---
 
@@ -49,12 +48,11 @@ Official channels for governance updates, new subnet launches, and announcements
 | Channel | URL | Notes |
 |---------|-----|-------|
 |  **bittensor.com** | [bittensor.com](https://bittensor.com) | Main landing page |
-|  **Open Tensor Foundation** | [opentensorfoundation.org](https://opentensorfoundation.org) | OTF: the non-profit organization behind Bittensor |
+|  **Open Tensor Foundation** | [bittensor.com](https://bittensor.com) | OTF: the non-profit organization behind Bittensor |
 |  **@bittensor (Twitter/X)** | [@bittensor](https://x.com/bittensor) | Official updates, partnerships, milestones |
 |  **@MacrocosmosAI** | [@MacrocosmosAI](https://x.com/MacrocosmosAI) | The team behind SN13 Data Universe |
 |  **Bittensor Discord** | [discord.gg/bittensor](https://discord.gg/bittensor) | Global community: #general, per-subnet channels, #dev-help |
 |  **Telegram Announcements** | [t.me/BittensorAnnouncements](https://t.me/BittensorAnnouncements) | Low-volume update channel |
-|  **Bittensor Blog** | [bittensor.com/blog](https://bittensor.com/blog) | Technical deep dives + product updates |
 
 ---
 
@@ -62,12 +60,18 @@ Official channels for governance updates, new subnet launches, and announcements
 
 Source code for popular subnets. Fork + study to understand internals & find contribution ideas.
 
-### Camp Curriculum Subnets
+### Camp Curriculum Subnet
 
 | Subnet | Repo | Topic |
 |--------|------|-------|
-| **Sportstensor (SN41)** | [github.com/taoshidev/sportstensor](https://github.com/taoshidev/sportstensor) | Sports event predictive model |
-| **Data Universe (SN13)** ⭐ | [github.com/macrocosm-os/data-universe](https://github.com/macrocosm-os/data-universe) | Decentralized data scraping |
+| **Data Universe (SN13)** ⭐ | [github.com/macrocosm-os/data-universe](https://github.com/macrocosm-os/data-universe) | Decentralized data scraping — pins `bittensor==10.3.0` |
+
+:::note SN41 Sportstensor was retired from this curriculum
+SN41 rebranded to **Almanac** and replaced its incentive mechanism: miners no longer serve
+predictions to validators, they trade Polymarket orders through
+[beta.almanac.market](https://beta.almanac.market) and validators score their trading history.
+The old code repo (`sportstensor/sn41`) was archived on 2026-07-20. The camp now runs SN13 only.
+:::
 
 ### Other Major Subnets
 
@@ -77,12 +81,11 @@ Source code for popular subnets. Fork + study to understand internals & find con
 | **Ridges (SN62)** | [github.com/ridgesai/ridges](https://github.com/ridgesai/ridges) | Code intelligence & engineering agent |
 | **Targon (SN4)** | [github.com/manifold-inc/targon](https://github.com/manifold-inc/targon) | LLM inference subnet |
 | **Omron (SN2)** | [github.com/inference-labs-inc/omron-subnet](https://github.com/inference-labs-inc/omron-subnet) | zkML verifiable inference |
-| **Cortex.t (SN18)** | [github.com/corcel-api/cortex.t](https://github.com/corcel-api/cortex.t) | Text generation API |
 
 :::tip How to Read a Subnet Repo
 1. `README.md`: overview first
 2. `neurons/miner.py` and `neurons/validator.py`: code entry points
-3. `protocol.py`: synapse schema (chain ↔ miner ↔ validator interactions)
+3. `protocol.py`: request/response schema (on SDK 10 repos this is a `bt.Synapse`; Bittensor 11 replaced that stack with signed HTTP)
 4. `scoring/` or `rewards/`: incentive mechanism
 :::
 
@@ -96,7 +99,6 @@ Videos, blogs, and podcasts to learn Bittensor more deeply.
 
 | Channel | URL | Content |
 |---------|-----|---------|
-|  **Bittensor Guru** | [youtube.com/@BittensorGuru](https://www.youtube.com/@BittensorGuru) | Beginner-to-advanced tutorials, subnet reviews |
 |  **Open Tensor Foundation** | [youtube.com/@opentensor](https://www.youtube.com/@opentensor) | Official channel: keynotes, AMAs, product updates |
 |  **Macrocosmos AI** | [youtube.com/@MacrocosmosAI](https://www.youtube.com/@MacrocosmosAI) | Deep dives on SN13 + their subnet family |
 |  **Tensor Tuesdays** (podcast) | search Spotify | Weekly podcast with subnet operators |
@@ -105,9 +107,7 @@ Videos, blogs, and podcasts to learn Bittensor more deeply.
 
 | Resource | URL | Notes |
 |----------|-----|-------|
-|  **Corcel Blog** | [corcel.io/blog](https://corcel.io/blog) | Technical deep dives: LLM subnets, inference |
-|  **Taostats Blog** | [taostats.io/blog](https://taostats.io/blog) | Analytics-heavy: emission trends, validator economics |
-|  **OTF Newsroom** | [bittensor.com/blog](https://bittensor.com/blog) | Official announcements |
+|  **Bittensor Docs** | [bittensor.com/docs](https://www.bittensor.com/docs) | Official v11 docs, migration guide, error catalog |
 |  **Messari Bittensor Report** | search "Messari Bittensor" on Google | Institutional-grade research |
 
 ---
@@ -118,9 +118,9 @@ Before deploying to mainnet, **always test on testnet** (no real TAO).
 
 | Tool | URL / Command | Function |
 |------|---------------|----------|
-|  **Testnet Faucet** | [faucet.bittensor.com](https://faucet.bittensor.com) | Free test TAO for devs |
+|  **Testnet TAO** | [Bittensor Discord](https://discord.gg/qasY3HA9F9) → testnet-faucet channel | No public web faucet: request test TAO from the community with your **coldkey** SS58 |
 |  **Testnet Endpoint** | `wss://test.finney.opentensor.ai:443` | Subtensor testnet chain |
-|  **Btcli** | `pip install bittensor` → `btcli --help` | CLI wallet, subnet, stake management |
+|  **Btcli** | `pip install bittensor` → `btcli --help` | Bittensor 11 bundles SDK + wallet + CLI in one package |
 |  **Subtensor Docker** | [hub.docker.com/u/opentensorfdn](https://hub.docker.com/u/opentensorfdn) | Run a local subtensor node |
 |  **Bittensor Wallet GUI** | [chrome web store search: bittensor wallet](https://chromewebstore.google.com/) | Browser extension wallet (still beta) |
 |  **Mock Subtensor** | [github.com/opentensor/bittensor/blob/master/bittensor/mock/subtensor_mock.py](https://github.com/opentensor/bittensor/) | Mock chain for unit testing |
@@ -169,7 +169,7 @@ Keep this as a dictionary when reading Bittensor docs or forums.
 : An individual "market" for a specific AI task (inference, data scraping, prediction, etc.). Each has a **NetUID**.
 
 **NetUID**
-: The numeric subnet ID (SN13 = Data Universe, SN41 = Sportstensor, SN1 = Text Prompting, etc.).
+: The numeric subnet ID (SN13 = Data Universe, SN41 = Almanac, SN64 = Chutes, etc.).
 
 **Tempo**
 : A time interval (~72 minutes, ~360 blocks) at which validators set weights and emissions are distributed.
@@ -305,7 +305,7 @@ If you want to become a subnet owner or expert validator, start reading:
 ## Congratulations!
 
 :::tip You've Completed the CLC9 Bittensor Curriculum
-From not knowing what Web3 or AI is, to running production miners on two different subnets (SN41 Sportstensor & SN13 Data Universe): that's a **huge achievement.** Be proud of yourself!
+From not knowing what Web3 or AI is, to running a production miner on SN13 Data Universe: that's a **huge achievement.** Be proud of yourself!
 
 **Next steps:**
 

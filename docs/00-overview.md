@@ -1,7 +1,7 @@
 ---
 sidebar_position: 0
 title: 'Overview & Learning Path'
-description: 'Guidebook for the HackQuest Co-Learning Camp #21 India: 6 Townhalls from zero (Web3 & AI) to running miners on SN41 and SN13.'
+description: 'Guidebook for the HackQuest Co-Learning Camp #23 India: 6 Townhalls from zero (Web3 & AI) to running a miner on SN13 Data Universe.'
 slug: /overview
 ---
 
@@ -13,11 +13,11 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
   className="bittensor-logo bittensor-logo--hero"
 />
 
-# Co-Learning Camp #21 India — Guidebook
+# Co-Learning Camp #23 India — Guidebook
 
-> **HackQuest × Bittensor · Co-Learning Camp #21 India**
+> **HackQuest × Bittensor · Co-Learning Camp #23 India**
 
-Welcome! This guidebook takes you from **absolute zero** — no prior experience with blockchain or AI — all the way to **running your own miner** on two production Bittensor subnets: **Sportstensor (SN41)** and **Data Universe (SN13)**.
+Welcome! This guidebook takes you from **absolute zero** — no prior experience with blockchain or AI — all the way to **running your own miner** on a production Bittensor subnet: **Data Universe (SN13)**.
 
 The camp runs as **6 Townhalls (TH1 → TH6)**. Each townhall has learning content plus a hands-on quest.
 
@@ -42,7 +42,7 @@ No prior blockchain experience needed. No AI research background needed. What yo
 ```mermaid
 flowchart LR
     A[TH1<br/>Foundations<br/>Web3, AI, Bittensor] --> B[TH2<br/>Tooling & Ecosystem<br/>TAO, dTAO, btcli, wallets]
-    B --> C[TH3<br/>Core Subnets<br/>SN13, SN41, opportunities]
+    B --> C[TH3<br/>Core Subnets<br/>SN13, opportunities]
     C --> D[TH4<br/>Wallets & Miner Setup<br/>SDK, wallets, registration]
     D --> E[TH5<br/>Running a Miner<br/>Run, optimize, debug]
     E --> F[TH6<br/>Graduation<br/>Submit & showcase]
@@ -83,8 +83,7 @@ The economics and tooling layer.
 What subnets are and the ones you'll work with.
 
 - What Are Subnets?
-- **SN13: Data Universe** — decentralized data provision
-- **SN41: Sportstensor** — sports event prediction
+- **SN13: Data Universe** — decentralized data provision (the camp's hands-on subnet)
 - Other Notable Subnets (Chutes, Ridges, and more)
 - Use Cases
 - Builder & Contributor Opportunities
@@ -104,9 +103,8 @@ Hands-on setup before you mine.
 
 Run a real miner and improve its score.
 
-- Registering a Miner · Obtaining Your UID & Identity Binding
+- Registering a Miner
 - Run the Local Miner (ports, Ngrok / CGNAT)
-- SN41: Running the miner, Trade Execution, Trading Strategies (CLV, Elo/ML, arbitrage)
 - SN13: Running the miner, Scraping Strategy, Scoring & Rewards, S3 Storage
 - Logs, Common Errors & Debugging
 
@@ -139,7 +137,7 @@ Whitepaper, Taostats, official repos, YouTube, faucet, glossary — everything t
 **Ready?** Continue to [TH1 — Introduction to Web3](./TH1-Foundations-and-Introduction/introduction-to-web3).
 
 :::tip In a hurry? Skip the theory.
-The **[One-Shot Guide](./one-shot)** is a copy-paste path: fresh laptop → testnet miner → SN41 + SN13 mainnet, commands only. Use it if you want to ship first and read later.
+The **[One-Shot Guide](./one-shot)** is a copy-paste path: fresh laptop → registered on SN13 testnet, commands only. Use it if you want to ship first and read later.
 :::
 
 ---
@@ -149,8 +147,8 @@ The **[One-Shot Guide](./one-shot)** is a copy-paste path: fresh laptop → test
 - [Bittensor Official](https://bittensor.com)
 - [Whitepaper](https://bittensor.com/whitepaper)
 - [Taostats Explorer](https://taostats.io)
-- [Official Documentation](https://docs.bittensor.com)
-- [Testnet Faucet](https://faucet.bittensor.com)
+- [Official Documentation](https://www.bittensor.com/docs)
+- [Testnet TAO — Bittensor Discord](https://discord.gg/qasY3HA9F9) (no public web faucet)
 
 ---
 

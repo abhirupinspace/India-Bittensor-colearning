@@ -18,7 +18,7 @@ On this page you will have:
 :::
 
 :::note Prerequisites
-- ✅ Completed [Intro to Sportstensor](/TH5-Running-a-Miner/running-the-sn41-miner)
+- ✅ Completed [Intro to Data Universe](/TH3-Core-Subnets-and-Opportunities/sn13-data-universe)
 - ✅ Python 3.10+ (`python3 --version`)
 - ✅ `pip` and `venv` ready
 - ✅ Stable internet access
@@ -61,20 +61,17 @@ flowchart LR
 
 ## Step 1: Install btcli
 
-There are two packages:
+Since **Bittensor 11** there is only **one** package — it contains the SDK, the wallet, and `btcli`:
 
-- `bittensor-cli` → CLI only (lightweight, sufficient for wallet operations)
-- `bittensor` → full SDK (required later to run a miner)
+- `bittensor` (11.x) → SDK + wallet + `btcli`
+- ~~`bittensor-cli`~~, ~~`bittensor-wallet`~~ → **archived July 2026**, don't install them
 
 ### Set Up a Virtual Environment First
 
 ```bash
-# create a project folder
-mkdir -p ~/bittensor && cd ~/bittensor
-
 # virtual env to avoid global conflicts
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv ~/.venvs/bt
+source ~/.venvs/bt/bin/activate
 
 # confirm pip
 pip install --upgrade pip
@@ -83,24 +80,30 @@ pip install --upgrade pip
 ### Install
 
 ```bash
-# Install CLI + SDK together (recommended, since you'll need the SDK later)
-pip install bittensor bittensor-cli
+pip install bittensor
+```
+
+If an older install is lying around, clear it first — otherwise you get two competing `btcli`
+binaries on your PATH:
+
+```bash
+pip uninstall -y bittensor-cli bittensor-wallet
+pip install -U bittensor
 ```
 
 **Verify:**
 
 ```bash
-btcli --version
+btcli --version    # expect 11.x.x
 ```
 
-Output approximately:
-
-```text
-btcli, version 8.x.x
-```
+:::note Miner code needs a second venv
+The SN13 miner pins `bittensor==10.3.0` and can't share this environment. If you haven't created
+`~/.venvs/sn13` yet, see [Setting Up the Bittensor SDK](/TH4-Wallets-and-Miner-Setup/bittensor-sdk-setup).
+:::
 
 :::tip If You Get `command not found`
-Make sure the venv is active (`source ~/bittensor/venv/bin/activate`). If you want it global, re-install without venv, but the dependency conflict risk is high: **venv is safer**.
+Make sure the venv is active (`source ~/.venvs/bt/bin/activate`). If you want it global, re-install without a venv, but the dependency conflict risk is high: **venv is safer**.
 :::
 
 ### Checkpoint Validation
@@ -109,14 +112,14 @@ Make sure the venv is active (`source ~/bittensor/venv/bin/activate`). If you wa
 btcli --help | head -20
 ```
 
-If you see the list of subcommands (`wallet`, `subnet`, `stake`, etc.): installation is successful.
+If you see the list of subcommands (`wallet`, `subnets`, `stake`, `query`, `tx`, etc.): installation is successful.
 
 ---
 
 ## Step 2: Create the Coldkey
 
 ```bash
-btcli wallet new_coldkey --wallet.name sn41_miner
+btcli wallet new-coldkey -w sn13_miner
 ```
 
 The process:
@@ -135,7 +138,7 @@ The mnemonic to the new coldkey is:
 word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12
 
 You can use the mnemonic to recreate the key in case it gets lost. The command to use to regenerate the key is:
-btcli w regen_coldkey --mnemonic "word1 word2 ... word12"
+btcli wallet regen-coldkey --mnemonic "word1 word2 ... word12"
 ```
 
 :::danger BACK UP THE MNEMONIC NOW
@@ -159,16 +162,16 @@ history -c   # clear this shell session's history
 btcli wallet list
 ```
 
-Should show `sn41_miner` with an address starting with `5...` (SS58 format).
+Should show `sn13_miner` with an address starting with `5...` (SS58 format).
 
 ---
 
 ## Step 3: Create the Hotkey
 
 ```bash
-btcli wallet new_hotkey \
-  --wallet.name sn41_miner \
-  --wallet.hotkey miner_01
+btcli wallet new-hotkey \
+  -w sn13_miner \
+  -H miner_01
 ```
 
 Same process: password + new hotkey mnemonic. The hotkey mnemonic **should also be backed up**, but its risk profile is lower than the coldkey.
@@ -179,7 +182,7 @@ Output:
 The mnemonic to the new hotkey is:
 ...12 words...
 
-btcli w regen_hotkey --mnemonic "..."
+btcli wallet regen-hotkey --mnemonic "..."
 ```
 
 ### Checkpoint
@@ -192,7 +195,7 @@ Expected output:
 
 ```text
 Wallets
-└── sn41_miner
+└── sn13_miner
     ├── Coldkey  5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty
     └── Hotkeys
         └── miner_01  5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL
@@ -208,37 +211,33 @@ You'll need a screenshot of `btcli wallet list` for the graduation submission at
 
 ## Step 4: Get TAO (Testnet First!)
 
-### Option A: Testnet Faucet (RECOMMENDED for learning)
+### Option A: Testnet TAO (RECOMMENDED for learning)
 
-Testnet TAO is free via faucet. The testnet uses a separate subtensor endpoint.
+Testnet TAO is free, but there is **no public faucet any more**: `faucet.bittensor.com` is gone,
+and Bittensor 11 has no `btcli wallet faucet` command. Test TAO is requested from the community:
 
-```bash
-btcli wallet faucet \
-  --wallet.name sn41_miner \
-  --subtensor.network test
-```
+1. Join the [Bittensor Discord](https://discord.gg/qasY3HA9F9).
+2. Find the testnet-faucet request channel.
+3. Post your **coldkey SS58** — never the mnemonic — and mention you're a Co-Learning Camp participant.
 
-The process requires **proof-of-work** (runs for a few minutes on CPU). After completion:
+Once funded, verify:
 
 ```bash
 btcli wallet overview \
-  --wallet.name sn41_miner \
-  --subtensor.network test
+  -w sn13_miner \
+  -n test
 ```
 
 The testnet TAO (τ) balance will appear on the coldkey.
 
-:::tip Faucet Sometimes Disabled
-If the faucet is rate-limited or disabled, ask in the **Bittensor Discord** `#testnet-faucet` channel or try again a few hours later. As a web alternative, paste your **coldkey SS58** at `https://app.minersunion.ai/testnet-faucet`.
-:::
-
-:::note Testnet balance/overview may error
-On the current testnet runtime, `btcli wallet overview` / `wallet balance` with `--subtensor.network test` can fail with `Storage function "Swap.AlphaSqrtPrice" not found`. This is a chain-side runtime skew, not a wallet problem — make sure you're on **btcli ≥ 9.22** first. If it persists, confirm your balance from the `Your balance is: …` line that the **registration** step prints (TH5) before it charges.
+:::tip Always use the coldkey address
+The faucet request takes your **coldkey** SS58, not the hotkey. Funds live on the coldkey; the
+hotkey only signs miner operations.
 :::
 
 ### Option B: Mainnet (Buy From an Exchange)
 
-For **real mining on SN41 mainnet**:
+For **real mining on SN13 mainnet**:
 
 1. Buy TAO on a supporting exchange:
    - **Kraken** (pair: TAO/USD, TAO/USDT): most established
@@ -258,13 +257,13 @@ Test with a **small amount** first (0.01 TAO) before withdrawing the full amount
 ### Check the Mainnet Balance
 
 ```bash
-btcli wallet overview --wallet.name sn41_miner
+btcli wallet overview -w sn13_miner
 ```
 
 Expected:
 
 ```text
-Coldkey: sn41_miner
+Coldkey: sn13_miner
   Balance: τ 2.000000000
   Hotkeys:
     miner_01 (5Ci...DjL)  Stake: τ 0.0
@@ -284,17 +283,17 @@ btcli --version
 btcli wallet list
 
 # 3. Coldkey balance is sufficient (min 1.5 TAO on mainnet, or 5+ test-τ on testnet)
-btcli wallet overview --wallet.name sn41_miner
+btcli wallet overview -w sn13_miner
 
 # 4. (Optional) check balance by hotkey
-btcli wallet balance --wallet.name sn41_miner
+btcli wallet balance sn13_miner
 ```
 
 ### Checkpoint Matrix
 
 | Check | Expected | If Failed |
 |---|---|---|
-| `btcli --version` | `9.x.x` shows (≥ 9.22 for testnet) | Re-install / upgrade (`pip install -U bittensor-cli`), make sure venv active |
+| `btcli --version` | `11.x.x` shows | Re-install / upgrade (`pip install -U bittensor`), make sure the `bt` venv is active |
 | `btcli wallet list` | Coldkey + hotkey appear | Re-run steps 2 & 3 |
 | Coldkey balance ≥ 1.5 TAO (mainnet) | Balance shows | Add deposit from exchange |
 | Balance ≥ 5 test-τ (testnet) | Balance shows | Re-run the faucet |
@@ -306,11 +305,11 @@ btcli wallet balance --wallet.name sn41_miner
 btcli stores wallets in `~/.bittensor/wallets/`:
 
 ```text
-~/.bittensor/wallets/sn41_miner/
+~/.bittensor/wallets/sn13_miner/
 ├── coldkey             # encrypted, requires password
 ├── coldkeypub.txt      # public key (safe to share)
 └── hotkeys/
-    └── miner_01        # encrypted hotkey
+    └── miner_01        # hotkey — PLAINTEXT, no password
 ```
 
 :::danger DO NOT Commit This Folder to Git
@@ -386,10 +385,10 @@ Your coldkey & hotkey already exist on your local machine. Now copy the **hotkey
 On the VPS:
 
 ```bash
-btcli wallet regen_coldkeypub --wallet.name sn41_miner
+btcli wallet regen-coldkeypub -w sn13_miner
 # Paste the coldkey public key (NOT the mnemonic!)
 
-btcli wallet regen_hotkey --wallet.name sn41_miner --wallet.hotkey miner_01
+btcli wallet regen-hotkey -w sn13_miner -H miner_01
 # Paste your hotkey mnemonic
 ```
 
@@ -402,7 +401,7 @@ The coldkey = full access to your TAO funds. **Only store coldkeypub (public key
 Recommended if you want to separate hotkeys per subnet:
 
 ```bash
-btcli wallet new_hotkey --wallet.name sn41_miner --wallet.hotkey miner_01
+btcli wallet new-hotkey -w sn13_miner -H miner_01
 ```
 
 Save the displayed mnemonic somewhere safe!
@@ -410,14 +409,14 @@ Save the displayed mnemonic somewhere safe!
 Check the hotkey:
 
 ```bash
-btcli wallet overview --wallet.name sn41_miner
+btcli wallet overview -w sn13_miner
 ```
 
 ### Ideal Wallet Layout on the VPS
 
 ```text
 /home/miner/.bittensor/wallets/
-└── sn41_miner/
+└── sn13_miner/
     ├── coldkeypub.txt  # ONLY pub, NEVER full coldkey!
     └── hotkeys/
         └── miner_01
@@ -434,7 +433,7 @@ Use `tmux` or `screen` so a dropped SSH connection doesn't kill your work: `tmux
 You have successfully:
 
 - ✅ Installed `btcli` + `bittensor` SDK in a virtualenv
-- ✅ Generated **coldkey** `sn41_miner` + offline mnemonic backup
+- ✅ Generated **coldkey** `sn13_miner` + offline mnemonic backup
 - ✅ Generated **hotkey** `miner_01` + mnemonic backup
 - ✅ Got TAO (testnet via faucet or mainnet via exchange)
 - ✅ Verified the balance via `btcli wallet overview`
@@ -456,7 +455,7 @@ You have successfully:
 | Faucet output `rate limited` | Too many requests | Wait 1–4 hours, or ask Discord |
 | Balance shows but `0.0` | Transaction not confirmed | Wait 1–3 blocks (12–36 seconds) |
 | SS58 address looks different | Different network | Make sure endpoints match (`--subtensor.network test` for testnet) |
-| `Invalid password` on unlock | Typo | No reset: must use mnemonic via `btcli w regen_coldkey` |
+| `Invalid password` on unlock | Typo | No reset: must use mnemonic via `btcli wallet regen-coldkey` |
 | Mnemonic lost |  Cannot recover | Create a new wallet, treat the old one as lost |
 
 :::tip Bookmark the Output
@@ -465,4 +464,4 @@ Save screenshots of `btcli wallet list` and `btcli wallet overview`: needed for 
 
 ---
 
-**Next:** [Registering a Miner on Sportstensor →](/TH5-Running-a-Miner/registering-a-miner)
+**Next:** [Registering a Miner on Data Universe →](/TH5-Running-a-Miner/registering-a-miner)

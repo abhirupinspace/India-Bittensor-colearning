@@ -99,7 +99,7 @@ const config: Config = {
           title: 'Bittensor',
           items: [
             {label: 'bittensor.com', href: 'https://bittensor.com'},
-            {label: 'Documentation', href: 'https://docs.bittensor.com'},
+            {label: 'Documentation', href: 'https://www.bittensor.com/docs'},
             {label: 'Taostats', href: 'https://taostats.io'},
             {label: 'Discord', href: 'https://discord.gg/bittensor'},
           ],

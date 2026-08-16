@@ -1,6 +1,6 @@
 ---
 title: 'Logs, Common Errors & Debugging'
-sidebar_position: 11
+sidebar_position: 7
 description: 'A systematic guide to debugging a Bittensor miner: the top 10 most common issues, a step-by-step debug flow, reading logs, per-OS troubleshooting, plus the production interaction layer (FastAPI query handling, monitoring/uptime, and load testing).'
 ---
 
@@ -119,7 +119,7 @@ tmux attach -t bittensor-miner
 
 ```bash
 # Fix
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 btcli --version  # should now appear
 ```
 
@@ -134,30 +134,40 @@ btcli --version  # should now appear
 **Cause:** Wrong venv or bittensor not installed.
 
 ```bash
-# Verify venv is active
+# Verify which venv is active
 which python
-# Should be: /home/user/bittensor-env/bin/python
+# btcli work  -> /home/user/.venvs/bt/bin/python
+# miner code  -> /home/user/.venvs/sn13/bin/python
 
-# Reinstall the SDK
-pip install "bittensor<10.0.0"
+# Reinstall in the venv you're actually in:
+pip install bittensor                # ~/.venvs/bt   (v11)
+pip install "bittensor==10.3.0"      # ~/.venvs/sn13 (miner)
 ```
 
 ---
 
 ### Issue 3: `ImportError` or `AttributeError` related to bittensor
 
-**Symptom:** Errors like `cannot import name 'SubnetInfo' from 'bittensor'` or `AttributeError: 'subtensor' object has no attribute 'X'`
+**Symptom:** Errors like `cannot import name 'Synapse' from 'bittensor'`, `module 'bittensor' has no attribute 'axon'`, or `AttributeError: 'Subtensor' object has no attribute 'commit'`
 
-**Cause:** SDK version too new (v10+), incompatible with the subnet template.
+**Cause:** You're running **miner code against Bittensor 11**. The `Axon`/`Dendrite`/`Synapse`
+stack, `bt.config`, and `bt.logging` were all removed in v11, and `data-universe` pins
+`bittensor==10.3.0`.
 
 ```bash
 # Check version
 python -c "import bittensor; print(bittensor.__version__)"
 
-# If >=10.0.0, downgrade:
+# For the MINER venv it must be 10.3.0 — not 11.x:
 pip uninstall bittensor -y
-pip install "bittensor<10.0.0"
+pip install "bittensor==10.3.0"
 ```
+
+:::tip This is the single most common setup error
+`btcli` needs v11; the SN13 miner needs 10.3.0. If you install one over the other in the same
+venv, something breaks in one direction or the other. Keep them separate — see
+[SDK Setup](/TH4-Wallets-and-Miner-Setup/bittensor-sdk-setup).
+:::
 
 ---
 
@@ -222,7 +232,7 @@ btcli wallet list
 ls ~/.bittensor/wallets/
 
 # If files exist but are corrupted, restore from mnemonic
-btcli wallet regen_coldkey --wallet-name mywallet
+btcli wallet regen-coldkey -w mywallet
 ```
 
 ---
@@ -239,10 +249,10 @@ ERROR | Your balance τ 0.0000 is insufficient to pay the registration fee
 2. Note: POW registration is disabled on NetUID 1, you must use testnet TAO
 
 ```bash
-btcli subnet register \
+btcli subnets register \
   --netuid 1 \
-  --wallet-name mywallet \
-  --hotkey miner1 \
+  -w mywallet \
+  -H miner1 \
   --network test
 ```
 
@@ -302,7 +312,7 @@ A common cause: the hotkey isn't registered on the subnet → check with `btcli 
 
 ```bash
 # 1. Check whether the immunity period is still active
-btcli subnets metagraph --netuid 1 --network test
+btcli subnets metagraph 1 --network test
 # Look at the "Immunity" column
 
 # 2. Check whether there are active validators on the testnet subnet
@@ -316,7 +326,7 @@ curl -v http://<public_ip>:8091
 ```
 
 :::note Zero Reward on Testnet = Normal
-On testnet, validators may be inactive or the emission mechanism may differ. Local mining focuses on **learning the flow**: not actual rewards. Production rewards live on mainnet (Sportstensor / Data Universe).
+On testnet, validators may be inactive or the emission mechanism may differ. Local mining focuses on **learning the flow**: not actual rewards. Production rewards live on mainnet (Data Universe, SN13).
 :::
 
 ---
@@ -347,7 +357,7 @@ pip list
 
 # Check a specific package
 pip show bittensor
-pip show bittensor-cli
+# (bittensor-cli is archived — v11 bundles btcli into `bittensor`)
 ```
 
 ### Check Processes & Resources
@@ -386,7 +396,7 @@ df -h ~
 |-------|-------|-----|
 | `SSL: CERTIFICATE_VERIFY_FAILED` | macOS SSL certs out of date | `python -m bittensor certifi` |
 | Miner dies when screen sleeps | Sleep mode active | Use `caffeinate -i python3 ...` |
-| `zsh: command not found: btcli` | venv not active or PATH wrong | `source ~/bittensor-env/bin/activate` |
+| `zsh: command not found: btcli` | venv not active or PATH wrong | `source ~/.venvs/bt/bin/activate` |
 | Homebrew permission error | Multi-user Mac | `sudo chown -R $(whoami) /opt/homebrew` (Apple Silicon) |
 | `libomp` or `libssl` error | Missing dylib | `brew install libomp openssl` |
 | Python 3.10 not found | PATH not updated | `export PATH="/opt/homebrew/opt/python@3.10/bin:$PATH"` |
@@ -415,7 +425,7 @@ After trying to debug yourself and still being stuck, ask the community. Tips:
    # Copy this output to Discord/forum
    python --version
    pip show bittensor | grep Version
-   pip show bittensor-cli | grep Version
+   btcli --version
    uname -a  # or: sw_vers (macOS)
    btcli --version
    ```
@@ -441,7 +451,20 @@ Debugging is reactive. For a production miner you also want the **proactive** an
 
 ### The Active Query Path (Axon / FastAPI)
 
-Beyond passively syncing, validators sometimes send the miner a **live query** over its axon endpoint: "give me a fresh sample now." The Bittensor framework bundles `bt.axon`: a FastAPI wrapper that handles gRPC-like RPC over HTTP. A synapse defines the request/response schema, and you attach a handler:
+Beyond passively syncing, validators sometimes send the miner a **live query** over its axon endpoint: "give me a fresh sample now." On the legacy SDK this is `bt.axon`: a FastAPI wrapper that handles gRPC-like RPC over HTTP. A synapse defines the request/response schema, and you attach a handler:
+
+:::warning `bt.axon` / `bt.Synapse` were removed in Bittensor 11
+The whole `Axon` / `Dendrite` / `Synapse` networking stack is **gone** from Bittensor 11 — along
+with `bt.config`, `bt.logging`, and `bt.Tensor`. The code below is SDK **10.3.0**, which is what
+`data-universe` pins and what runs in your `~/.venvs/sn13` environment, so it's correct there.
+
+If you later build a subnet against v11, the replacement is **plain HTTP plus signed requests**:
+you bring your own framework (FastAPI, whatever) and use `bt.http_auth.sign()` on the client and
+`bt.http_auth.verify()` on the server to prove a request came from a specific hotkey, was
+addressed to yours, covers exactly the bytes received, and is recent. Authorization (checking
+stake or `validator_permit` in the metagraph) stays your decision, separate from authentication.
+See the [signed requests guide](https://www.bittensor.com/docs/guides/signed-requests).
+:::
 
 ```python
 # neurons/miner.py (skeleton)
@@ -645,7 +668,7 @@ Congratulations! You've finished the entire **local mining** sequence:
 
 You now have a **strong technical foundation** to move on to production mining:
 
-- **[Sportstensor SN41](/TH5-Running-a-Miner/running-the-sn41-miner)** → CPU-friendly, sports prediction, can run from a laptop
-- **[Data Universe SN13](/TH5-Running-a-Miner/running-the-sn13-miner)** → VPS recommended, data scraping, storage-heavy
+- **[Data Universe SN13](/TH5-Running-a-Miner/running-the-sn13-miner)** → VPS recommended, data scraping, storage-heavy — the camp's hands-on subnet
+- **[Builder & Contributor Opportunities](/TH3-Core-Subnets-and-Opportunities/builder-and-contributor-opportunities)** → where to go once your first miner is stable
 
 *Debugging is a skill, not a weakness. The best miner is the one who knows how to fix their own problems. *

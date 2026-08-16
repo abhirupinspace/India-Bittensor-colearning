@@ -1,6 +1,6 @@
 ---
 title: 'Running the SN13 Miner'
-sidebar_position: 7
+sidebar_position: 3
 description: 'Get to know Data Universe (SN13): the decentralized data-provision subnet for AI training. Miner & validator architecture, and why "data is the new oil" in the Bittensor ecosystem.'
 ---
 
@@ -12,15 +12,16 @@ After completing this section you will:
 - Know the **miner ↔ validator architecture** and the SN13 data pipeline flow
 - Understand why **data is the new oil** for AI training
 - Be able to roughly estimate **hardware & bandwidth budget** before deploying
-- Know the **fundamental differences** between SN13 and SN41 (storage-heavy vs compute-light)
+- Know how SN13's **resource profile** differs from compute-heavy subnets (storage-heavy vs compute-light)
 :::
 
 :::note Prerequisites
 Before continuing, make sure you've completed:
 - ✅ The foundations Townhalls (Web3, AI, Decentralized AI, Why Bittensor)
 - ✅ The core-concepts and core-subnets material (tokenomics, subnet roles)
-- ✅ The Sportstensor (SN41) track up to a running miner
+- ✅ [Run the Local Miner](/TH5-Running-a-Miner/run-the-local-miner) — you've seen a miner process run end to end
 - ✅ Have a **coldkey/hotkey wallet**, understand `btcli`, understand the miner lifecycle
+- ✅ The **pinned miner venv** (`~/.venvs/sn13`, `bittensor==10.3.0`) from [SDK Setup](/TH4-Wallets-and-Miner-Setup/bittensor-sdk-setup)
 :::
 
 ---
@@ -205,21 +206,25 @@ The numbers above are rough estimates for April 2026. Real earnings are volatile
 
 ---
 
-## SN13 vs SN41: When to Use Which?
+## Where SN13 Sits Among Subnets
 
-You've already run an SN41 miner. What's the difference?
+Subnets differ mainly in what resource they bottleneck on. That's what decides whether a subnet is
+a realistic first miner for you:
 
-| Aspect | SN41 Sportstensor | SN13 Data Universe |
-|--------|-------------------|--------------------|
-| **Core work** | Predictive model for match outcomes | Scraping & storing raw web data |
-| **Hardware bottleneck** | CPU + model inference | Storage + bandwidth |
-| **GPU?** | Optional (for ML model) | Not needed |
-| **Scoring signal** | Prediction accuracy vs actual result | Freshness + uniqueness + validity |
-| **ML complexity** | High (requires feature engineering) | Low (standard scraper) |
-| **Best for** | ML engineer, data scientist | DevOps, backend engineer, hobbyist with storage |
+| Aspect | Data-type subnet (SN13) | Inference/prediction subnets |
+|--------|-------------------------|------------------------------|
+| **Core work** | Scraping & storing raw web data | Model inference or forecasting |
+| **Hardware bottleneck** | Storage + bandwidth | CPU/GPU + model quality |
+| **GPU?** | Not needed | Often required |
+| **Scoring signal** | Freshness + uniqueness + validity | Output accuracy vs ground truth |
+| **ML complexity** | Low (standard scraper) | High (feature engineering, training) |
+| **Best for** | DevOps, backend engineer, hobbyist with storage | ML engineer, data scientist |
 
-:::tip Dual-Miner Strategy
-Many CLC graduates run **miners on SN41 and SN13 simultaneously** on separate VPSes for emission diversification. But for camp graduation, one stable miner (running at submission time) is enough.
+:::tip Why the camp runs SN13
+SN13 is the track this guidebook takes end to end: no GPU, a modest VPS is enough, and the
+[upstream repo](https://github.com/macrocosm-os/data-universe) is actively maintained. Once one
+miner is stable, the same operational pattern (wallet → register → run → monitor) transfers to
+almost any subnet.
 :::
 
 ---

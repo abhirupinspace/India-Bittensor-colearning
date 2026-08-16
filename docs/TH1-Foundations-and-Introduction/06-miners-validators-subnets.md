@@ -334,5 +334,5 @@ You now understand **who** does what inside a subnet. Next we look at **what the
 
 ### Additional References
 
-- [Bittensor Docs: Subnet Architecture](https://docs.bittensor.com/subnets/understanding-subnets)
+- [Bittensor Docs: Subnet Architecture](https://www.bittensor.com/docs/concepts/network)
 - Foundations recap: [What is Bittensor?](/TH1-Foundations-and-Introduction/what-is-bittensor)

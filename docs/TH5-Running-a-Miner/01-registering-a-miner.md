@@ -1,7 +1,7 @@
 ---
 title: 'Registering a Miner'
 sidebar_position: 1
-description: 'Check the registration cost, run btcli subnet register, handle common errors, and verify your UID is assigned in the Sportstensor metagraph.'
+description: 'Check the registration cost, run btcli subnets register, handle common errors, and verify your UID is assigned in the Data Universe metagraph.'
 ---
 
 # Registering a Miner
@@ -9,15 +9,15 @@ description: 'Check the registration cost, run btcli subnet register, handle com
 :::info What You'll Do
 By the end of this section you will:
 - Understand the **TAO recycle / burn** mechanism for subnet registration
-- Know how to **check the actual registration cost** via `btcli subnet burn_cost`
-- Successfully **register your hotkey** on netuid 41 (or testnet netuid)
+- Know how to **check the actual registration cost** via `btcli subnets burn-cost`
+- Successfully **register your hotkey** on netuid 13 (or testnet netuid)
 - Verify your **UID** appears in the metagraph
 - Know how to handle common errors (insufficient balance, registration closed, etc.)
 :::
 
 :::note Prerequisites
 - ✅ [Wallet & TAO Funding](/TH4-Wallets-and-Miner-Setup/getting-ready-for-mining) complete
-- ✅ Coldkey `sn41_miner` has balance ≥ 1.5 TAO (mainnet) or ≥ 5 test-τ (testnet)
+- ✅ Coldkey `sn13_miner` has balance ≥ 1.5 TAO (mainnet) or ≥ 5 test-τ (testnet)
 - ✅ Hotkey `miner_01` already created
 - ✅ Stable internet (registration takes 30–90 seconds)
 :::
@@ -26,7 +26,7 @@ By the end of this section you will:
 
 ## Registration Concept: Burn vs PoW
 
-Bittensor has two historical registration modes. **SN41 currently uses burn (recycle) mode**: more predictable and friendlier for non-professional miners.
+Bittensor has two historical registration modes. **SN13 currently uses burn (recycle) mode**: more predictable and friendlier for non-professional miners.
 
 ```mermaid
 flowchart TD
@@ -58,31 +58,31 @@ Once burned, TAO can't be refunded. If you get deregistered later, you **don't g
 
 ## Step 1: Check the Registration Cost
 
-### Mainnet (netuid 41)
+### Mainnet (netuid 13)
 
 ```bash
-btcli subnet burn_cost --netuid 41
+btcli subnets burn-cost 13
 ```
 
 Output:
 
 ```text
-Recycle required to register on subnet 41: τ 0.237493921
+Recycle required to register on subnet 13: τ 0.237493921
 ```
 
 This number is **fluctuating per block** (every ~12 seconds). If it's high right now, wait a few hours.
 
 ### Testnet
 
-The Sportstensor testnet currently uses **netuid 41** (it previously ran on netuid 172, now full/retired). If registration says the subnet doesn't exist, confirm the current testnet netuid via `btcli subnet list --subtensor.network test` or the official Sportstensor docs.
+The Data Universe testnet currently uses **netuid 13** (it previously ran on netuid 172, now full/retired). If registration says the subnet doesn't exist, confirm the current testnet netuid via `btcli subnets list -n test` or the official Data Universe docs.
 
 ```bash
-btcli subnet burn_cost --netuid 41 --subtensor.network test
+btcli subnets burn-cost 13 -n test
 ```
 
 :::tip View All Subnets + Prices
 ```bash
-btcli subnet list
+btcli subnets list
 ```
 Shows a table of all active subnets along with the current burn cost. Useful for orientation.
 :::
@@ -92,10 +92,44 @@ Shows a table of all active subnets along with the current burn cost. Useful for
 Make sure your coldkey balance is at least **1.5× burn cost** + buffer:
 
 ```bash
-btcli wallet overview --wallet.name sn41_miner
+btcli wallet overview -w sn13_miner
 ```
 
 If burn cost is `0.24 τ`, minimum balance `~0.4 τ`. **Have an extra buffer** in case the burn cost rises while you're executing.
+
+:::warning Budget beyond the burn cost — registration is always MEV-shielded
+In Bittensor 11 `subnets register` submits through the MEV Shield pallet, and a shielded
+submission needs **additional free TAO for the outer carrier fee** on top of the burn. A wallet
+holding exactly the burn cost will fail:
+
+```text
+error: MEV-shielded submission needs free TAO for the outer carrier fee
+  help: burned_register cannot submit unshielded
+```
+
+You cannot opt out — burned registration rejects `--no-mev-shield`:
+
+```text
+error: burned_register must be submitted MEV-shielded
+  help: collateral / burned-registration AMM fills cannot run unshielded; omit --no-mev-shield
+```
+
+**Always `--dry-run` first.** It's free and surfaces this before you commit:
+
+```bash
+btcli subnets register --netuid 13 -w sn13_miner -H miner_01 --dry-run
+```
+:::
+
+:::tip `btcli explain` decodes any error
+v11 ships a built-in error catalog:
+
+```bash
+btcli explain insufficient_balance   # long-form cause + remediation
+btcli explain                        # list every semantic code
+btcli explain --chain                # the chain-side error catalog
+```
+:::
 
 ---
 
@@ -104,20 +138,20 @@ If burn cost is `0.24 τ`, minimum balance `~0.4 τ`. **Have an extra buffer** i
 ### Mainnet
 
 ```bash
-btcli subnet register \
-  --netuid 41 \
-  --wallet.name sn41_miner \
-  --wallet.hotkey miner_01
+btcli subnets register \
+  --netuid 13 \
+  -w sn13_miner \
+  -H miner_01
 ```
 
 ### Testnet (recommended for first-timers)
 
 ```bash
-btcli subnet register \
-  --netuid 41 \
-  --wallet.name sn41_miner \
-  --wallet.hotkey miner_01 \
-  --subtensor.network test
+btcli subnets register \
+  --netuid 13 \
+  -w sn13_miner \
+  -H miner_01 \
+  -n test
 ```
 
 btcli will:
@@ -134,7 +168,7 @@ btcli will:
 Balance:
   τ 2.000000000  →  τ 1.762506079
 ✅ Registered
-Registered on netuid 41 with UID 142
+Registered on netuid 13 with UID 142
 ```
 
 **Record UID 142** (your number will differ): this is your miner identity in the subnet.
@@ -142,10 +176,10 @@ Registered on netuid 41 with UID 142
 ### Checkpoint
 
 ```bash
-btcli wallet overview --wallet.name sn41_miner
+btcli wallet overview -w sn13_miner
 ```
 
-Expected: balance dropped by burn_cost, and under hotkey `miner_01` the field `uid: <number>` appears.
+Expected: balance dropped by the burn cost, and under hotkey `miner_01` the field `uid: <number>` appears.
 
 ---
 
@@ -154,13 +188,13 @@ Expected: balance dropped by burn_cost, and under hotkey `miner_01` the field `u
 The **metagraph** = subnet state snapshot (all miners + validators, UID, stake, weights).
 
 ```bash
-btcli subnet metagraph --netuid 41
+btcli subnets metagraph 13
 ```
 
 Output table (excerpt):
 
 ```text
-Subnet 41: Sportstensor
+Subnet 13: Data Universe
   UID  STAKE    RANK     TRUST    INCENTIVE   EMISSION   HOTKEY
   ...
   142  0.0000   0.0000   0.0000   0.0000      0.0000     5Ci...DjL
@@ -172,7 +206,7 @@ Find the row whose **hotkey SS58** matches your `btcli wallet list`.
 :::tip Filter Directly to Your UID
 Pipe grep to find quickly:
 ```bash
-btcli subnet metagraph --netuid 41 | grep "5Ci"
+btcli subnets metagraph 13 | grep "5Ci"
 ```
 (Replace `5Ci` with the first 3–5 characters of your hotkey SS58.)
 :::
@@ -229,7 +263,7 @@ Error: Not enough balance to pay for registration.
 
 **Fix:**
 - Add TAO from an exchange (mainnet) or faucet (testnet)
-- Or wait for burn cost to drop (`watch -n 60 btcli subnet burn_cost --netuid 41`)
+- Or wait for burn cost to drop (`watch -n 60 btcli subnets burn-cost 13`)
 
 ### 2. `RegistrationDisabled` / Registration Closed Window
 
@@ -241,7 +275,7 @@ Error: Registration is disabled.
 
 **Fix:**
 - Wait for the next window: typically the subnet team announces on Discord
-- Check `btcli subnet list` status column / next registration
+- Check `btcli subnets list` status column / next registration
 
 ### 3. `PriorityIsTooLow` / `TooManyRegistrationsThisBlock`
 
@@ -270,7 +304,7 @@ Error: Incorrect password for coldkey.
 **Fix:**
 - No reset. If the password is permanently lost → use the mnemonic regen:
   ```bash
-  btcli w regen_coldkey --mnemonic "..." --wallet.name sn41_miner_v2
+  btcli wallet regen-coldkey --mnemonic "..." -w sn13_miner_v2
   ```
 - This is a new wallet from the same mnemonic: address stays the same (SS58 is deterministic from mnemonic).
 
@@ -280,10 +314,10 @@ Error: Incorrect password for coldkey.
 
 Take screenshots of the following output (you need them for the final submission):
 
-1. `btcli subnet burn_cost --netuid 41` **before** registering
-2. The output of `btcli subnet register ...` showing `Registered on netuid 41 with UID <N>`
-3. `btcli subnet metagraph --netuid 41 | grep <hotkey_prefix>` showing your UID in the metagraph
-4. `btcli wallet overview --wallet.name sn41_miner` (balance after burn)
+1. `btcli subnets burn-cost 13` **before** registering
+2. The output of `btcli subnets register ...` showing `Registered on netuid 13 with UID <N>`
+3. `btcli subnets metagraph 13 | grep <hotkey_prefix>` showing your UID in the metagraph
+4. `btcli wallet overview -w sn13_miner` (balance after burn)
 
 Save in a local folder `~/bittensor/submission-evidence/03-register/`.
 
@@ -292,16 +326,16 @@ Save in a local folder `~/bittensor/submission-evidence/03-register/`.
 ## Summary
 
 - ✅ Understand the **burn/recycle** mode: pay TAO → get UID
-- ✅ Check burn cost via `btcli subnet burn_cost`
-- ✅ Successfully `btcli subnet register --netuid 41 ...`
+- ✅ Check burn cost via `btcli subnets burn-cost`
+- ✅ Successfully `btcli subnets register --netuid 13 ...`
 - ✅ UID assigned
-- ✅ Verified the UID appears in `btcli subnet metagraph --netuid 41`
+- ✅ Verified the UID appears in `btcli subnets metagraph 13`
 - ✅ Understand the immunity period concept (~24 hour buffer for miner setup)
 
 ### ✅ Quick Check
 
 1. What's the difference between **burn** and **PoW** registration modes?
-2. What's the minimum number of flags needed for `btcli subnet register` on mainnet?
+2. What's the minimum number of flags needed for `btcli subnets register` on mainnet?
 3. What happens to TAO after burn: lost, refunded, or recycled?
 4. What's the use of the immunity period for new miners?
 5. In the metagraph table, which column matters most for your emission?
@@ -312,14 +346,14 @@ Save in a local folder `~/bittensor/submission-evidence/03-register/`.
 |---|---|
 | Burn cost looks unusually high | Wait a few hours: supply & demand |
 | UID doesn't appear in metagraph despite success output | Wait 1–2 minutes (sync delay), then re-check |
-| `btcli subnet metagraph` is very slow | Normal: metagraph is large. Use `grep` to filter |
+| `btcli subnets metagraph` is very slow | Normal: metagraph is large. Use `grep` to filter |
 | Registered on the wrong netuid | TAO is gone on that netuid: can't be moved. Be careful next time |
 | Want to voluntarily deregister | Can't: only auto-deregister when lowest score and a new miner enters |
 
 :::danger DON'T Double-Register on the Same netuid
-If you register a second hotkey on netuid 41 with the same coldkey: OK, two slots. But if you re-register the same hotkey without deregistering first → TAO wasted. Check `metagraph` first before re-registering.
+If you register a second hotkey on netuid 13 with the same coldkey: OK, two slots. But if you re-register the same hotkey without deregistering first → TAO wasted. Check `metagraph` first before re-registering.
 :::
 
 ---
 
-**Next:** [Obtaining Your UID & Identity Binding →](/TH5-Running-a-Miner/obtaining-uid-and-binding)
+**Next:** [Run the Local Miner →](/TH5-Running-a-Miner/run-the-local-miner)

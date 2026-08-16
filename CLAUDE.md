@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Docusaurus 3.7 static site hosting the **HackQuest Co-Learning Camp #21 India** Bittensor guidebook (HackQuest × Bittensor). Almost all content is Markdown/MDX in `docs/`; very little custom code. The program is structured as **6 Townhalls (TH1–TH6)**.
+Docusaurus 3.7 static site hosting the **HackQuest Co-Learning Camp #23 India** Bittensor guidebook (HackQuest × Bittensor). Almost all content is Markdown/MDX in `docs/`; very little custom code. The program is structured as **6 Townhalls (TH1–TH6)**.
 
 ## Commands
 
-`bun.lock` is committed — use bun. README mentions yarn; either works, just don't mix.
+`bun.lock` is committed — use bun.
 
 ```bash
 bun install           # install
@@ -31,15 +31,37 @@ No test suite. No linter configured.
 - **Curriculum structure** (folder = URL segment):
   - `docs/TH1-Foundations-and-Introduction/` — Web3, AI, what Bittensor is, miners/validators/subnets, program structure
   - `docs/TH2-Tooling-and-Ecosystem/` — TAO tokenomics, Dynamic TAO, wallets, btcli, network structure, incentives
-  - `docs/TH3-Core-Subnets-and-Opportunities/` — subnets, SN13 Data Universe, SN41 Sportstensor, other subnets, use cases, builder opportunities
+  - `docs/TH3-Core-Subnets-and-Opportunities/` — subnets, SN13 Data Universe, other subnets, use cases, builder opportunities
   - `docs/TH4-Wallets-and-Miner-Setup/` — install deps, Bittensor SDK, create wallets, registration, miner architecture
-  - `docs/TH5-Running-a-Miner/` — register, UID, run local miner, SN41 (trade execution/strategies) & SN13 (scraping/scoring/S3), debugging
+  - `docs/TH5-Running-a-Miner/` — register, run local miner (archived template, teaching rig), SN13 (scraping/scoring/S3), logs & debugging
   - `docs/TH6-Graduation-and-Showcase/` — submission, showcases, recognition, ecosystem opportunities, graduation (concise scaffolds)
   - `docs/One-Shot-Guide/` (slug `/one-shot`) and `docs/Resources/` (slug `/resources`) are standalone top-level pages
 - **Broken links throw**: `onBrokenLinks: 'throw'` — a typo in any internal link fails `bun run build`. Run `bun run build` before claiming a docs change is done; `bun start` does not enforce this.
 - **Mermaid enabled** via `@docusaurus/theme-mermaid` (`markdown.mermaid: true`). Use ```` ```mermaid ```` fences directly.
 - **Local search**: `docusaurus-plugin-search-local` with `docsRouteBasePath: '/'` — matches the root-mounted docs. If `routeBasePath` changes, update this too.
 - **Prism extras**: `bash, python, json, yaml, toml, rust` are pre-registered for code fences.
+
+## Versioning reality (as of Aug 2026)
+
+The upstream stack moved a major version in July 2026. Keep these straight when editing:
+
+- **Bittensor 11** = one package (`pip install bittensor`) containing SDK + wallet + `btcli`.
+  `bittensor-cli` / `bittensor-wallet` are archived; `opentensor/bittensor` moved to
+  `RaoFoundation/subtensor` (`sdk/python`). Docs: https://www.bittensor.com/docs
+- **btcli v11 syntax**: `-w` / `-H` / `-n`, `btcli subnets` (plural), hyphenated subcommands,
+  positional netuid on `burn-cost` / `metagraph` / `show`, `--amount-tao` / `--amount-alpha`,
+  `--json`, `--dry-run`, config at `~/.bittensor/btcli.json`. The v9 `--wallet.name` /
+  `--subtensor.network` style is gone. Verify commands against a real install, not from memory.
+- **Two venvs on purpose**: `~/.venvs/bt` (Bittensor 11, for btcli) and `~/.venvs/sn13`
+  (`bittensor==10.3.0`, for miner code, which `macrocosm-os/data-universe` pins). Miner-script
+  examples intentionally keep legacy `--wallet.name` argparse flags — **do not "fix" those**.
+- **Removed in v11**: `Axon` / `Dendrite` / `Synapse`, `bt.config`, `bt.logging`, `bt.Tensor`.
+  Replacement for the networking layer is signed HTTP (`bt.http_auth`). Legacy SDK code samples
+  in TH5 are labelled as SDK 10.3.0 on purpose.
+- **SN41 is retired from this curriculum** (rebranded to Almanac, mechanism replaced, repo
+  archived). TH5 is SN13-only. Don't reintroduce SN41 as a hands-on track.
+- `opentensor/bittensor-subnet-template` is archived and cannot run on v11; TH5/02 keeps it as an
+  explicitly-labelled teaching rig.
 
 ## Conventions
 

@@ -1,7 +1,7 @@
 ---
 title: 'Lessons Learned'
 sidebar_position: 3
-description: 'A short retro template for reflecting on your HackQuest × Bittensor Co-Learning Camp #21 India experience.'
+description: 'A short retro template for reflecting on your HackQuest × Bittensor Co-Learning Camp #23 India experience.'
 ---
 
 # Lessons Learned

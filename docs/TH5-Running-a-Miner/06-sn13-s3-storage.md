@@ -1,6 +1,6 @@
 ---
 title: 'SN13: S3 Storage'
-sidebar_position: 10
+sidebar_position: 6
 description: 'Set up S3-compatible storage (Cloudflare R2 / AWS S3 / Backblaze B2), configure bucket & credentials, upload flow from local buffer to cloud, and verify on-chain metadata.'
 ---
 
@@ -233,6 +233,14 @@ Success if output shows `✅ Uploaded: https://<endpoint>/<bucket>/test/hello.js
 After upload, the miner must publish the metadata to the chain so validators know where to fetch data.
 
 Depending on the `data-universe` version, the framework typically handles this automatically through a `MinerStorage` abstraction. Internally, however:
+
+:::note This is SDK 10.3.0 API, on purpose
+The snippet below uses the **legacy** SDK surface (`bt.wallet`, `bt.subtensor`, `bt.logging`,
+`subtensor.commit`) because that's what `data-universe` pins (`bittensor==10.3.0`) and therefore
+what runs in your `~/.venvs/sn13` environment. In Bittensor 11 these were replaced —
+`bt.Subtensor()`, standard-library `logging`, and commitments submitted as intents via
+`client.execute(...)`. Don't "modernize" this code unless the upstream repo has migrated.
+:::
 
 ```python
 # storage/chain_notifier.py (pseudocode: see real implementation in repo)

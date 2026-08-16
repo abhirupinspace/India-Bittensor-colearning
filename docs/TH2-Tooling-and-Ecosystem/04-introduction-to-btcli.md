@@ -31,7 +31,7 @@ This page introduces btcli conceptually and serves as a command reference. The a
 - Viewing the metagraph, overview, emission
 - Voting / delegating (for governance)
 
-Built on the Python SDK (`bittensor-cli`), so it's compatible with virtually all OSes (Linux, macOS, Windows WSL).
+Ships inside the `bittensor` Python package (v11 bundles SDK + wallet + CLI), so it works on virtually all OSes (Linux, macOS, Windows WSL).
 
 ## Subtensor: What It Is and Why You Should Know
 
@@ -62,27 +62,49 @@ Throughout this program we'll use the **public finney endpoint**.
 
 These are the commands you'll use most. Memorize them or bookmark this section.
 
+:::note These are Bittensor 11 commands
+btcli was rewritten for **v11** (July 2026). If you find older tutorials using
+`-w` / `-n` or `btcli subnet` (singular), those are **v9 syntax and
+no longer work**. The mapping:
+
+| v9 | v11 |
+|---|---|
+| `--wallet.name` | `--wallet` / `-w` |
+| `--wallet.hotkey` | `--wallet-hotkey` / `-H` |
+| `--subtensor.network` | `--network` / `-n` |
+| `--subtensor.chain_endpoint wss://…` | `-n ws://…` |
+| `--amount` | `--amount-tao` (stake add) / `--amount-alpha` (unstake) |
+| `--json-output` | `--json` |
+| `btcli subnets …` | `btcli subnets …` |
+| `wallet new_coldkey` | `wallet new-coldkey` (hyphens throughout) |
+| `~/.bittensor/config.yml` | `~/.bittensor/btcli.json` |
+:::
+
 ### Wallet Management
 
 ```bash
-# Create a new coldkey
-btcli wallet new_coldkey --wallet.name my_wallet
+# Create a coldkey + hotkey in one go
+btcli wallet create -w my_wallet -H miner1
 
-# Create a hotkey under that coldkey
-btcli wallet new_hotkey --wallet.name my_wallet --wallet.hotkey miner1
+# Or individually
+btcli wallet new-coldkey -w my_wallet
+btcli wallet new-hotkey -w my_wallet -H miner1
 
 # List all wallets on the system
 btcli wallet list
 
 # View wallet overview (balance, stake, subnet)
-btcli wallet overview --wallet.name my_wallet
+btcli wallet overview -w my_wallet
 
-# Export (back up) the mnemonic
-btcli wallet regen_coldkey --wallet.name backup_wallet
+# Free TAO balance only
+btcli wallet balance my_wallet
+
+# Restore a coldkey from its mnemonic
+btcli wallet regen-coldkey -w backup_wallet
 ```
 
 :::danger BACK UP YOUR MNEMONIC!
-When you run `btcli wallet new_coldkey`, you'll be prompted with a **12/24-word mnemonic**. This is the **only way to recover** the wallet if it's lost.
+When you run `btcli wallet create`, you'll be shown a **mnemonic** (12 words by default; 15/18/21/24 also selectable). This is the **only way to recover** the wallet if it's lost — the wallet password only decrypts the local file.
 
 **What you must do:**
 - Write it on physical paper (don't put it in a cloud note!)
@@ -97,54 +119,98 @@ If your mnemonic is leaked, your TAO can be drained in seconds.
 
 ```bash
 # Transfer TAO to another address
-btcli wallet transfer --wallet.name my_wallet --dest 5CAh... --amount 10
+btcli wallet transfer -w my_wallet --dest 5CAh... --amount-tao 10
 
-# Stake TAO to a validator (delegated staking)
-btcli stake add --wallet.name my_wallet --amount 50
+# Stake TAO onto a hotkey on a subnet
+btcli stake add -w my_wallet --netuid 13 --hotkey 5Fxx... --amount-tao 50
 
-# Unstake TAO
-btcli stake remove --wallet.name my_wallet --amount 50
+# Unstake (alpha-denominated on dynamic subnets)
+btcli stake remove -w my_wallet --netuid 13 --hotkey 5Fxx... --amount-alpha 50
 
 # View current stake
-btcli stake show --wallet.name my_wallet
+btcli stake list -w my_wallet
 ```
+
+:::warning Amounts are unit-explicit in v11
+`Balance` is strict about units now. You stake **TAO in** (`--amount-tao`) and unstake
+**alpha out** (`--amount-alpha`), because staking swaps TAO into the subnet's alpha token at the
+pool price. Stake trades are also **slippage-protected by default** (5%) and MEV-shielded —
+they'll fail with `SlippageTooHigh` rather than fill at a bad price.
+:::
 
 ### Subnet Management
 
 ```bash
 # List all active subnets
-btcli subnet list
+btcli subnets list
 
-# View the metagraph for a specific subnet
-btcli subnet metagraph --netuid 41
+# View the metagraph for a specific subnet (netuid is positional)
+btcli subnets metagraph 13
+
+# Check the current registration burn cost BEFORE registering
+btcli subnets burn-cost 13
+
+# Preview a registration without submitting
+btcli subnets register --netuid 13 -w my_wallet -H miner1 --dry-run
 
 # Register a miner/validator on a subnet
-btcli subnet register --netuid 41 --wallet.name my_wallet --wallet.hotkey miner1
-
-# Check the current registration price
-btcli subnet register --netuid 41 --wallet.name my_wallet --wallet.hotkey miner1 --dry-run
+btcli subnets register --netuid 13 -w my_wallet -H miner1
 ```
 
 ### Info & Monitoring
 
 ```bash
-# Root overview: TAO total supply, emission rate
-btcli root get_weights
+# Subnet-specific emission, tempo, burn and stake
+btcli subnets show 13
 
-# Subnet-specific emission and stake
-btcli subnet show --netuid 13
+# Every stake position across all your wallets
+btcli stake list --all
 
-# View delegations to a particular validator
-btcli stake show --all
+# Raw chain reads (the generated query catalog)
+btcli query subnet --netuid 13
+btcli query uid --netuid 13 --hotkey-ss58 5Fxx...
 ```
+
+### How Address Arguments Resolve
+
+Any address option (`--dest`, `--hotkey`, `--coldkey`, and positional address arguments) accepts
+three forms:
+
+| Form | Example | Notes |
+|---|---|---|
+| Raw **ss58 address** | `5CAh...` | Always works |
+| **Local name** | `my_wallet` or `my_wallet/miner1` | Hotkey options take `HOTKEY` or `WALLET/HOTKEY`; coldkey options take a wallet name. Address-book and proxy-book names resolve too |
+| **Omitted** | — | `--hotkey` / `--coldkey` fall back to the configured wallet's own keys. **Destination-style options never default** |
+
+```bash
+btcli query hotkey-owner --hotkey my_coldkey/my_hotkey
+btcli wallet balance my_coldkey
+```
+
+That last one is why `btcli wallet balance` takes the wallet name positionally rather than via `-w`.
+
+### Signing & Verifying Messages
+
+```bash
+btcli wallet sign --message "hello" -w my_wallet              # coldkey signature (prompts for password)
+btcli wallet sign --message "hello" --use-hotkey -w my_wallet # hotkey signature
+btcli wallet verify --message "hello" --signature 0x... --ss58 5F...
+```
+
+Every transaction declares which key signs it: **staking and transfers are coldkey-signed**,
+**weights and axon serving are hotkey-signed**.
 
 :::tip Practical Tip
 Use `--help` at the end of any command to see the full options. Examples:
 
 ```bash
 btcli wallet --help
-btcli subnet register --help
+btcli subnets register --help
 ```
+
+Two v11 conveniences worth knowing:
+- `--dry-run` previews any mutation (fee + effects) without submitting it
+- `btcli explain <ERROR_CODE>` gives a long-form explanation of any error you hit
 :::
 
 ---
@@ -185,10 +251,16 @@ Because this involves real money, practice good hygiene from day one.
 - ✅ Lock your laptop / enable FDE (full disk encryption)
 
 **Pro level (significant capital):**
-- ✅ Hardware wallet (Ledger or Trezor) for the main coldkey
+- ✅ Hardware signer for the main coldkey — a **Ledger** (via the Polkadot generic app) or **Polkadot Vault** (QR signing from a permanently offline phone)
+- ✅ A **proxy** with narrow permissions (`Staking`, `Registration`, …) for routine work, so the primary coldkey stays cold
 - ✅ Multi-sig via the Subtensor multi-sig pallet (for teams)
 - ✅ Dedicated server for the validator/miner (not your personal laptop)
 - ✅ Uptime monitoring + alerting
+
+:::warning A hardware wallet is not a backup
+It's a **signing device**. It will not export your seed phrase, and too many wrong PIN attempts
+factory-resets it. Use one *in addition to* your written seed-phrase backups — never instead of them.
+:::
 
 :::danger Common Scams
 - Telegram DM claiming to be a "HackQuest admin" asking for your mnemonic: SCAM
@@ -202,7 +274,7 @@ Because this involves real money, practice good hygiene from day one.
 ## Summary
 
 :::tip Key Takeaways
-1. **btcli** = the main Bittensor CLI, built on the `bittensor-cli` Python SDK
+1. **btcli** = the main Bittensor CLI, shipped inside the `bittensor` package since v11
 2. **Subtensor** = the Substrate-based chain; you'll use the public **finney** endpoint
 3. **Cheatsheet**: wallet, stake, subnet, and info commands cover almost everything you'll do
 4. **Chrome Extension**: GUI wallet for monitoring balances, optional but handy
@@ -220,6 +292,6 @@ Because this involves real money, practice good hygiene from day one.
 
 ### References
 
-- [btcli Official Docs](https://docs.bittensor.com/btcli)
+- [btcli Official Docs](https://www.bittensor.com/docs/quickstart)
 - [Taostats Explorer](https://taostats.io): real-time metagraph, alpha prices, emission
 - [Bittensor Chrome Extension (Opentensor)](https://bittensor.com/wallet)

@@ -1,7 +1,7 @@
 ---
 title: 'Run the Local Miner'
-sidebar_position: 3
-description: 'Clone the official Bittensor subnet-template, install dependencies, run the miner locally (Windows WSL2, macOS, Linux), keep it alive with screen/tmux, then make it reachable through firewall, port forwarding, or an Ngrok tunnel for CGNAT.'
+sidebar_position: 2
+description: 'Clone the (archived) Bittensor subnet-template as a teaching rig, install it in the pinned SDK 10.3.0 venv, run the miner locally (Windows WSL2, macOS, Linux), keep it alive with screen/tmux, then make it reachable through firewall, port forwarding, or an Ngrok tunnel for CGNAT.'
 ---
 
 import Tabs from '@theme/Tabs';
@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 :::info What You'll Learn
 By the end of this page you will:
-- **Clone and install** `opentensor/bittensor-subnet-template`: the official generic miner template
+- **Clone and install** `opentensor/bittensor-subnet-template` (archived — used here as a teaching rig)
 - **Run the miner** locally for the first time and see logs of it connecting to the testnet
 - **Use screen or tmux** to keep the miner running after the terminal is closed
 - Verify the miner is **active in the metagraph** (the field `Active: True`)
@@ -20,21 +20,41 @@ By the end of this page you will:
 
 :::note Prerequisites
 - ✅ [Registration](/TH4-Wallets-and-Miner-Setup/understanding-registration) complete: UID on NetUID 1 testnet
-- ✅ venv active: `source ~/bittensor-env/bin/activate`
+- ✅ The **pinned** venv active: `source ~/.venvs/sn13/bin/activate` (`bittensor==10.3.0`)
 - ✅ Git installed: `git --version`
+:::
+
+:::danger The subnet template is archived — this is a teaching exercise
+`opentensor/bittensor-subnet-template` was **archived on 2026-07-10**. Its own README says:
+
+> This template targets the legacy Bittensor SDK (v10) and its `Axon`/`Dendrite`/`Synapse`
+> networking stack, which was removed in Bittensor 11. It will not work with current releases.
+
+**Why this page still exists:** it is the cheapest way to watch a miner process start, load a
+wallet, sync a metagraph, and appear as `Active: True` — the mechanics you need before touching a
+real subnet. Run it in the **pinned `~/.venvs/sn13` venv** (SDK 10.3.0) and treat it as a
+teaching rig, not a starting point for your own subnet.
+
+**Do not** build a new subnet on this template. For that, use
+[Bittensor 11](https://www.bittensor.com/docs) and the
+[signed requests guide](https://www.bittensor.com/docs/guides/signed-requests), which replaces the
+Axon/Dendrite/Synapse layer with plain HTTP plus hotkey-signed headers.
+
+If you'd rather skip straight to a maintained, real subnet, go to
+[Running the SN13 Miner](/TH5-Running-a-Miner/running-the-sn13-miner).
 :::
 
 ---
 
 ## Step 1: Clone the Subnet Template
 
-Bittensor provides a generic miner template that runs on testnet out of the box:
+The generic miner template runs on testnet out of the box:
 
 ```bash
 # Go to the home directory
 cd ~
 
-# Clone the official repo
+# Clone the (archived) template repo
 git clone https://github.com/opentensor/bittensor-subnet-template.git
 
 # Enter the folder
@@ -182,7 +202,7 @@ A new terminal opens. Inside the screen, run the miner:
 <TabItem value="screen-linux" label="Linux/WSL2">
 
 ```bash
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 cd ~/bittensor-subnet-template
 
 python neurons/miner.py \
@@ -197,7 +217,7 @@ python neurons/miner.py \
 <TabItem value="screen-macos" label="macOS">
 
 ```bash
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 cd ~/bittensor-subnet-template
 
 caffeinate -i python3 neurons/miner.py \
@@ -253,7 +273,7 @@ tmux new -s bittensor-miner
 Run the miner inside tmux:
 
 ```bash
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 cd ~/bittensor-subnet-template
 
 # Linux/WSL2
@@ -292,10 +312,10 @@ After the miner has been running for a few minutes, open a new terminal and veri
 
 ```bash
 # Activate venv in the new terminal
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 
 # Check the metagraph
-btcli subnets metagraph --netuid 1 --network test
+btcli subnets metagraph 1 --network test
 ```
 
 Find your UID in the table. The `Active` field should be `True`:
@@ -318,7 +338,7 @@ After setup, your local directory:
 
 ```
 ~/
-├── bittensor-env/              # Python venv
+├── .venvs/bt/                  # Python venv (btcli, Bittensor 11)
 │   └── bin/
 │       ├── activate
 │       ├── btcli
@@ -530,7 +550,7 @@ ss -tlnp | grep 8091       # Linux/WSL2
 lsof -i :8091              # macOS/Linux
 
 # Confirm the metagraph sees you as Active
-btcli subnets metagraph --netuid 1 --network test
+btcli subnets metagraph 1 --network test
 ```
 
 ### Comparing Connection Solutions
@@ -551,7 +571,7 @@ btcli subnets metagraph --netuid 1 --network test
 - Run foreground first to verify clean startup logs
 - **screen** or **tmux** = how to keep the miner running after closing the terminal
 - **macOS**: must use `caffeinate -i` to prevent sleep
-- Verification: `btcli subnets metagraph --netuid 1 --network test` → `Active: True`
+- Verification: `btcli subnets metagraph 1 --network test` → `Active: True`
 - **Port 8091** must be reachable from the internet; **CGNAT** requires an Ngrok TCP tunnel with `--axon.external_ip` / `--axon.external_port`
 
 ### ✅ Quick Check

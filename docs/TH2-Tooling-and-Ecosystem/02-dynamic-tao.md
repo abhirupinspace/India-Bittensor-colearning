@@ -90,19 +90,19 @@ This is healthy natural selection for the ecosystem.
 
 ```bash
 # View alpha price across all subnets
-btcli subnet list
+btcli subnets list
 
 # View pool details for a specific subnet
-btcli subnet show --netuid 41
+btcli subnets show 13
 
 # Stake TAO into a subnet (receive alpha)
-btcli stake add --netuid 41 --amount 100 --wallet.name clc9
+btcli stake add --netuid 13 --amount-tao 100 -w clc9
 
 # Unstake (sell alpha, receive TAO)
-btcli stake remove --netuid 41 --amount 50 --wallet.name clc9
+btcli stake remove --netuid 13 --amount-alpha 50 -w clc9
 
 # Move stake between subnets (swap alpha)
-btcli stake move --origin 41 --dest 13 --amount 50 --wallet.name clc9
+btcli stake move --origin-netuid 13 --dest-netuid 41 --amount-alpha 50 -w clc9
 ```
 
 ---

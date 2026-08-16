@@ -1,36 +1,48 @@
 ---
 title: 'Miner Architecture'
 sidebar_position: 5
-description: 'Run the miner process 24/7 with PM2/systemd, register sports coverage metadata to the subnet, and monitor validator query logs to confirm the miner is alive.'
+description: 'Run the SN13 miner process 24/7 with PM2 or systemd, configure its scraping environment, and monitor logs and the metagraph to confirm the miner is alive and being scored.'
 ---
 
 # Miner Architecture
 
 :::info What You'll Learn
 On this page you will:
-- Configure a `.env` file with all secrets (API keys, wallet paths)
-- **Register metadata** (sports & leagues you cover) on the subnet
-- **Launch the miner process** for the first time and see validator query logs
+- Configure a `.env` file with all secrets (API credentials, wallet paths)
+- **Launch the miner process** for the first time and read its logs
 - Set up **PM2** or **systemd** so the miner runs 24/7 and auto-restarts
-- Know how to **monitor health** & log rotation
+- Know how to **monitor health**, rotate logs, and confirm you're being scored
 :::
 
 :::note Prerequisites
-- ✅ [Almanac Registration](/TH5-Running-a-Miner/obtaining-uid-and-binding) complete: binding succeeded
-- ✅ Sportstensor repo cloned at `~/bittensor/sportstensor`
-- ✅ `config.yaml` valid
-- ✅ Port 8091 (or per config) reachable from the internet
-- ✅ (Optional but recommended) API key from a sports data provider: The Odds API has a free tier, Sportradar trial is paid
+- ✅ [Understanding Registration](/TH4-Wallets-and-Miner-Setup/understanding-registration) complete: you hold a UID on netuid 13
+- ✅ Data Universe repo cloned at `~/bittensor/data-universe`
+- ✅ The **pinned miner venv** created (see [Getting Ready for Mining](/TH4-Wallets-and-Miner-Setup/getting-ready-for-mining))
+- ✅ Scraper credentials ready (Reddit app credentials at minimum)
+:::
+
+:::danger Two venvs — do not mix them
+`btcli` runs on **Bittensor 11**. The SN13 miner code pins **`bittensor==10.3.0`** and will not
+run on 11. Keep them in separate virtual environments:
+
+| venv | Package | Used for |
+|---|---|---|
+| `~/.venvs/bt` | `bittensor` (11.x) | `btcli` — wallets, registration, metagraph queries |
+| `~/.venvs/sn13` | `bittensor==10.3.0` | running `neurons/miner.py` |
+
+A consequence you'll see all over this page: **btcli** takes v11 flags (`-w`, `-H`, `-n`), while
+the **miner script** takes legacy SDK argparse flags (`--wallet.name`, `--wallet.hotkey`).
+That mismatch is expected — they're two different programs on two different SDK majors.
 :::
 
 ---
 
 ## Step 1: Set Up the `.env` File
 
-Secrets and runtime config should **not** live in `config.yaml`. Use `.env` so it's not committed.
+Secrets and runtime config should **not** live in the repo config. Use `.env` so it's not committed.
 
 ```bash
-cd ~/bittensor/sportstensor
+cd ~/bittensor/data-universe
 cp .env.example .env   # if it exists; otherwise create manually
 nano .env
 ```
@@ -38,24 +50,20 @@ nano .env
 Example contents:
 
 ```bash
-# === Wallet (optional, override config.yaml) ===
-BT_WALLET_NAME=sn41_miner
+# === Wallet (read by the MINER code, which runs SDK 10.3.0) ===
+BT_WALLET_NAME=sn13_miner
 BT_WALLET_HOTKEY=miner_01
 BT_WALLET_PATH=/home/ubuntu/.bittensor/wallets
 
 # === Subnet ===
-BT_NETUID=41
-BT_NETWORK=finney             # finney = mainnet; 'test' = testnet
+BT_NETUID=13
+BT_SUBTENSOR_NETWORK=finney   # finney = mainnet; 'test' = testnet
 
-# === Endpoint (miner listens here) ===
-MINER_HOST=0.0.0.0
-MINER_PORT=8091
-MINER_EXTERNAL_IP=203.0.113.42
-MINER_EXTERNAL_PORT=8091
-
-# === Sports Data APIs ===
-ODDS_API_KEY=your_odds_api_key_here
-SPORTRADAR_API_KEY=your_sportradar_key_here   # optional
+# === Scraper credentials ===
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+REDDIT_USERNAME=your_reddit_username
+REDDIT_PASSWORD=your_reddit_password
 
 # === Logging ===
 LOG_LEVEL=debug
@@ -63,115 +71,113 @@ LOG_DIR=./logs
 ```
 
 :::danger .env = Secret
-Make sure `.env` is in `.gitignore`. A leaked API key = your billing is blown.
+Make sure `.env` is in `.gitignore`. Leaked scraper credentials get your accounts banned.
 
 ```bash
 echo ".env" >> .gitignore
 ```
 :::
 
+:::warning Env var names differ between the two SDK majors
+The variables above are read by the **miner code** (SDK 10.3.0). `btcli` v11 renamed them, so it
+will ignore these — set the v11 names if you want btcli defaults on this box too:
+
+| Purpose | Miner code (SDK 10.3.0) | btcli (Bittensor 11) |
+|---|---|---|
+| Wallet name | `BT_WALLET_NAME` | `BT_WALLET` |
+| Hotkey name | `BT_WALLET_HOTKEY` | `BT_WALLET_HOTKEY` |
+| Wallet path | `BT_WALLET_PATH` | `BT_WALLET_PATH` |
+| Network | `BT_SUBTENSOR_NETWORK` | `BT_NETWORK` |
+
+For btcli it's usually cleaner to skip env vars entirely and use `btcli config set` instead
+(stored in `~/.bittensor/btcli.json`).
+:::
+
 ### Checkpoint
 
 ```bash
 set -a; source .env; set +a
-echo "Netuid: $BT_NETUID: Hotkey: $BT_WALLET_HOTKEY"
+echo "Netuid: $BT_NETUID — Hotkey: $BT_WALLET_HOTKEY"
 ```
 
----
+### Unattended Coldkey Unlock
 
-## Step 2: Register Metadata (Sports Coverage)
+A 24/7 miner shouldn't need the coldkey at all — the **hotkey** signs weights and serving, and
+hotkey files are plaintext (no password). If some automation genuinely needs a coldkey-signed
+operation, btcli resolves the password in this order, first match wins:
 
-The subnet needs to know which sports you predict so validators only route relevant queries.
+1. An explicit `password=` argument (Python)
+2. `BT_WALLET_PASSWORD`
+3. A per-wallet variable named after the keyfile path (`BT_PW__...`)
+4. A password file: `--wallet-password-file` or `BT_WALLET_PASSWORD_FILE`
+5. macOS Keychain (`btcli wallet keychain`)
+6. Interactive prompt
 
-### Run Metadata Registration
-
-The exact command varies by repo: typically:
-
-```bash
-python scripts/register_metadata.py \
-  --wallet.name sn41_miner \
-  --wallet.hotkey miner_01 \
-  --sports "mlb,nba,nfl,soccer" \
-  --netuid 41
-```
-
-Or via the package CLI:
-
-```bash
-sportstensor-miner metadata \
-  --sports mlb,nba,nfl,soccer
-```
-
-### What Happens
-
-1. Script builds the payload: `{hotkey, sports: [...], model_version: "x.y.z"}`
-2. Signs with the hotkey
-3. Submits to the metadata endpoint (could be on-chain commitment or almanac)
-4. Receives confirmation
-
-### Successful Output
-
-```text
-[metadata] Registering sports: ['mlb', 'nba', 'nfl', 'soccer']
-[metadata] Model version: sportstensor-miner 2.1.0
-[metadata] ✅ Metadata commit successful
-  tx_hash / commit_ref: 0x9f3e...abcd
-```
-
-:::tip Start Narrow, Expand Later
-If you're just starting, **pick one sport** (e.g., `mlb`). Focus optimization on one domain > be a jack-of-all-bad-predictions. Add sports after CLV is positive.
+:::danger Don't put a coldkey password in `.env` on a mining server
+The whole point of the cold/hot split is that the miner box never holds funds-moving authority.
+If you find yourself wanting `BT_WALLET_PASSWORD` on a VPS, use a
+[proxy](https://www.bittensor.com/docs/guides/proxies) with a narrow permission scope instead, or
+sign from a separate workstation.
 :::
 
 ---
 
-## Step 3: Launch the Miner Process (Foreground First)
+## Step 2: Launch the Miner Process (Foreground First)
 
 **Run in foreground first to verify everything works**:
 
 ```bash
-cd ~/bittensor/sportstensor
-source ~/bittensor/venv/bin/activate
+cd ~/bittensor/data-universe
+source ~/.venvs/sn13/bin/activate
 
-python neurons/miner.py \
-  --netuid 41 \
-  --wallet.name sn41_miner \
+python ./neurons/miner.py \
+  --wallet.name sn13_miner \
   --wallet.hotkey miner_01 \
-  --axon.port 8091 \
-  --axon.external_ip 203.0.113.42 \
+  --netuid 13 \
   --logging.debug
 ```
+
+:::tip Try `--offline` first
+Data Universe supports an offline mode that scrapes and fills your local index without touching
+the chain. It's the cheapest way to prove your scrapers work before you care about scoring:
+
+```bash
+python ./neurons/miner.py --offline
+```
+:::
 
 ### Healthy Logs (Initial Example)
 
 ```text
-2026-04-14 10:30:12 | INFO     | Loading wallet sn41_miner/miner_01
-2026-04-14 10:30:13 | INFO     | Connected to subtensor finney (netuid 41)
-2026-04-14 10:30:14 | INFO     | Metagraph synced. UID=142. N_miners=256
-2026-04-14 10:30:14 | INFO     | Axon listening on 0.0.0.0:8091 (external: 203.0.113.42:8091)
-2026-04-14 10:30:15 | INFO     | Miner ready. Waiting for validator queries...
+2026-08-15 10:30:12 | INFO     | Loading wallet sn13_miner/miner_01
+2026-08-15 10:30:13 | INFO     | Connected to subtensor finney (netuid 13)
+2026-08-15 10:30:14 | INFO     | Metagraph synced. UID=142. N_miners=256
+2026-08-15 10:30:15 | INFO     | Miner ready. Starting scrape loop...
+2026-08-15 10:31:02 | INFO     | [reddit] scraped 240 rows for label r/bittensor_
+2026-08-15 10:31:40 | INFO     | MinerIndex updated: 12,480 rows across 34 buckets
 ```
 
-### First Query Arrives (Could Be Minutes to Hours)
+### What "Working" Looks Like
 
-```text
-2026-04-14 10:47:02 | DEBUG    | [validator 5Gh...abc UID=7] Query received
-  event_id=mlb_2026_04_14_NYY_BOS sport=mlb kickoff=2026-04-14T19:05:00Z
-2026-04-14 10:47:03 | DEBUG    | Prediction generated: home_win=0.58 confidence=0.72
-2026-04-14 10:47:03 | INFO     | Response sent to validator 5Gh...abc in 247ms
-```
+Unlike a request/response subnet, an SN13 miner is mostly a **scraping loop**. Progress shows up as:
 
-:::tip No Query Within 1 Hour?
-Normal at first: validators sometimes query in batches. Wait **up to 4 hours**. If still quiet:
-- Verify almanac binding is active
-- Check `metagraph`: make sure your UID is still listed
-- Check the port is reachable from the internet
+1. Scrape batches landing in the local SQLite store
+2. The **MinerIndex** growing (that's what validators read)
+3. Periodic S3 uploads once you've configured storage
+
+:::tip Nothing Scored Within a Few Hours?
+Normal at first. Validators sample miners on their own schedule, and a brand-new index is small.
+Before assuming a bug:
+- Confirm your UID is still in the metagraph
+- Confirm the scrape loop is actually adding rows (not erroring per-batch)
+- Give it 24–48 hours before reading anything into your incentive
 :::
 
 ### Stop (Ctrl+C) After You're Sure the Logs Are Healthy.
 
 ---
 
-## Step 4: Run 24/7 With PM2
+## Step 3: Run 24/7 With PM2
 
 PM2 = a Node.js process manager that also works for Python. Auto-restart on crash, log rotation built-in.
 
@@ -187,32 +193,31 @@ sudo npm install -g pm2
 ### Start the Miner via PM2
 
 ```bash
-cd ~/bittensor/sportstensor
-pm2 start neurons/miner.py \
-  --name sn41-miner \
-  --interpreter ~/bittensor/venv/bin/python \
+cd ~/bittensor/data-universe
+pm2 start python \
+  --name sn13-miner \
+  --interpreter ~/.venvs/sn13/bin/python \
   -- \
-  --netuid 41 \
-  --wallet.name sn41_miner \
+  ./neurons/miner.py \
+  --wallet.name sn13_miner \
   --wallet.hotkey miner_01 \
-  --axon.port 8091 \
-  --axon.external_ip 203.0.113.42 \
+  --netuid 13 \
   --logging.debug
 ```
 
 :::tip Note the `--` Double Dash
-Flags before `--` are for PM2. Flags after `--` are forwarded to the Python script.
+Flags before `--` are for PM2. Everything after `--` is forwarded to Python.
 :::
 
 ### PM2 Controls
 
 ```bash
 pm2 status              # list all processes
-pm2 logs sn41-miner     # tail logs in real time
-pm2 logs sn41-miner --lines 100  # last 100 lines
-pm2 restart sn41-miner  # restart
-pm2 stop sn41-miner     # stop (don't delete)
-pm2 delete sn41-miner   # remove from PM2
+pm2 logs sn13-miner     # tail logs in real time
+pm2 logs sn13-miner --lines 100  # last 100 lines
+pm2 restart sn13-miner  # restart
+pm2 stop sn13-miner     # stop (don't delete)
+pm2 delete sn13-miner   # remove from PM2
 ```
 
 ### Persist Across Reboots
@@ -237,7 +242,7 @@ Expected:
 ┌─────┬──────────────┬─────────┬─────────┬──────────┬────────┬──────┐
 │ id  │ name         │ mode    │ status  │ cpu      │ memory │ ↺    │
 ├─────┼──────────────┼─────────┼─────────┼──────────┼────────┼──────┤
-│ 0   │ sn41-miner   │ fork    │ online  │ 1.2%     │ 215mb  │ 0    │
+│ 0   │ sn13-miner   │ fork    │ online  │ 1.2%     │ 215mb  │ 0    │
 └─────┴──────────────┴─────────┴─────────┴──────────┴────────┴──────┘
 ```
 
@@ -245,39 +250,37 @@ Expected:
 
 ---
 
-## Step 4b (Alternative): systemd
+## Step 3b (Alternative): systemd
 
 If you prefer native systemd:
 
 ```bash
-sudo nano /etc/systemd/system/sn41-miner.service
+sudo nano /etc/systemd/system/sn13-miner.service
 ```
 
 Contents:
 
 ```ini
 [Unit]
-Description=Sportstensor SN41 Miner
+Description=Data Universe SN13 Miner
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/bittensor/sportstensor
-Environment="PATH=/home/ubuntu/bittensor/venv/bin:/usr/bin:/bin"
-EnvironmentFile=/home/ubuntu/bittensor/sportstensor/.env
-ExecStart=/home/ubuntu/bittensor/venv/bin/python neurons/miner.py \
-  --netuid 41 \
-  --wallet.name sn41_miner \
+WorkingDirectory=/home/ubuntu/bittensor/data-universe
+Environment="PATH=/home/ubuntu/.venvs/sn13/bin:/usr/bin:/bin"
+EnvironmentFile=/home/ubuntu/bittensor/data-universe/.env
+ExecStart=/home/ubuntu/.venvs/sn13/bin/python ./neurons/miner.py \
+  --wallet.name sn13_miner \
   --wallet.hotkey miner_01 \
-  --axon.port 8091 \
-  --axon.external_ip 203.0.113.42 \
+  --netuid 13 \
   --logging.debug
 Restart=always
 RestartSec=10
-StandardOutput=append:/var/log/sn41-miner.log
-StandardError=append:/var/log/sn41-miner.err.log
+StandardOutput=append:/var/log/sn13-miner.log
+StandardError=append:/var/log/sn13-miner.err.log
 
 [Install]
 WantedBy=multi-user.target
@@ -287,22 +290,22 @@ Activate:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable sn41-miner
-sudo systemctl start sn41-miner
-sudo systemctl status sn41-miner
-sudo journalctl -u sn41-miner -f   # tail logs
+sudo systemctl enable sn13-miner
+sudo systemctl start sn13-miner
+sudo systemctl status sn13-miner
+sudo journalctl -u sn13-miner -f   # tail logs
 ```
 
 ---
 
-## Step 5: Monitoring & Health Checks
+## Step 4: Monitoring & Health Checks
 
 ### A. Tail Logs in Real Time
 
 ```bash
-pm2 logs sn41-miner --lines 50
+pm2 logs sn13-miner --lines 50
 # or
-tail -f ~/bittensor/sportstensor/logs/miner.log
+tail -f ~/bittensor/data-universe/logs/miner.log
 ```
 
 ### B. Simple Watcher Script
@@ -311,29 +314,32 @@ Create `scripts/watch.sh`:
 
 ```bash
 #!/bin/bash
+# btcli here is the v11 binary from ~/.venvs/bt — NOT the miner venv
+BTCLI=~/.venvs/bt/bin/btcli
+
 while true; do
   echo "=== $(date) ==="
   echo "Process:"
-  pm2 jlist | python3 -c "import sys,json; d=json.load(sys.stdin); m=[x for x in d if x['name']=='sn41-miner']; print('status:', m[0]['pm2_env']['status'] if m else 'NOT FOUND')"
+  pm2 jlist | python3 -c "import sys,json; d=json.load(sys.stdin); m=[x for x in d if x['name']=='sn13-miner']; print('status:', m[0]['pm2_env']['status'] if m else 'NOT FOUND')"
   echo "Metagraph (emission & trust):"
-  btcli subnet metagraph --netuid 41 2>/dev/null | grep "<hotkey_prefix>"
+  $BTCLI subnets metagraph 13 2>/dev/null | grep "<hotkey_prefix>"
   echo
   sleep 300
 done
 ```
 
-### C. Query Counter
+### C. Scrape Counter
 
-Grep logs to count queries per hour:
+Grep logs to gauge throughput:
 
 ```bash
-grep "Query received" logs/miner.log | wc -l
+grep "scraped" logs/miner.log | wc -l
 ```
 
 ### D. Dashboard (Optional Advanced)
 
-- **Grafana + Prometheus**: if the miner exposes a `/metrics` endpoint
-- **Sportstensor public leaderboard**: check your miner's rank (URL per the official docs)
+- **Grafana + Prometheus**: Data Universe ships `prometheus_client` and a FastAPI instrumentator
+- **[Macrocosmos dashboards](https://www.macrocosmos.ai)** for network-level SN13 stats
 
 ---
 
@@ -344,23 +350,23 @@ After 2–6 hours of running, verify:
 | Check | Command | Expected |
 |---|---|---|
 | Process alive | `pm2 status` | `online` + restart `0` |
-| Queries arriving | `grep "Query received" logs/miner.log \| tail` | At least 1 entry |
-| Successful responses | `grep "Response sent" logs/miner.log \| wc -l` | > 0 |
+| Scraping working | `grep "scraped" logs/miner.log \| tail` | Recent entries |
+| Index growing | `grep "MinerIndex updated" logs/miner.log \| tail -1` | Row count rising |
 | No error cascades | `grep -i "error\|exception" logs/miner.log` | Rare / none |
-| Trust/Rank starts non-zero (after 24–48 hours) | `btcli subnet metagraph --netuid 41` | Trust > 0 |
+| Trust/Rank non-zero (after 24–48 h) | `btcli subnets metagraph 13` | Trust > 0 |
 
 :::tip Screenshot for Graduation
 Save:
 1. The `pm2 status` output
-2. 20–30 lines of log showing `Query received` + `Response sent`
-3. `btcli subnet metagraph --netuid 41` with your UID visible
+2. 20–30 lines of log showing scrape batches and an index update
+3. `btcli subnets metagraph 13` with your UID visible
 :::
 
 ---
 
 ## Log Rotation & Disk Hygiene
 
-Debug logs can grow fast. PM2 built-in rotation:
+Debug logs can grow fast, and SN13 is storage-heavy to begin with. PM2 built-in rotation:
 
 ```bash
 pm2 install pm2-logrotate
@@ -372,11 +378,11 @@ pm2 set pm2-logrotate:compress true
 Or manually via `logrotate`:
 
 ```bash
-sudo nano /etc/logrotate.d/sn41-miner
+sudo nano /etc/logrotate.d/sn13-miner
 ```
 
 ```text
-/home/ubuntu/bittensor/sportstensor/logs/*.log {
+/home/ubuntu/bittensor/data-universe/logs/*.log {
     daily
     rotate 14
     compress
@@ -392,32 +398,33 @@ sudo nano /etc/logrotate.d/sn41-miner
 
 | Log error | Meaning | Fix |
 |---|---|---|
-| `Axon port already in use` | Port 8091 used by another process | `lsof -i :8091` → kill or change port |
+| `ImportError` / `AttributeError` from `bittensor` | Miner venv is on SDK 11, not 10.3.0 | `pip install "bittensor==10.3.0"` in `~/.venvs/sn13` |
 | `Wallet not found` | Wrong wallet path | Check `BT_WALLET_PATH`; default `~/.bittensor/wallets` |
 | `UID not in metagraph` | Not registered / deregistered | Go back to the registration step |
-| `Connection refused to subtensor` | Chain endpoint down | Try fallback: `--subtensor.chain_endpoint wss://entrypoint-finney.opentensor.ai:443` |
-| `Timeout waiting for query` | Normal if just started | Wait up to 4 hours; verify almanac |
-| `OOM killed` | RAM low | Upgrade VPS or tune model batch size |
-| Validator ping 404 on `/health` | Endpoint not implementing health check | Not a blocker; but implementing helps debugging |
+| `Connection refused to subtensor` | Chain endpoint down | Retry; the SDK cycles a fallback endpoint pool automatically |
+| Reddit `401` / `429` | Bad credentials or rate limited | Re-check `.env`; back off your scrape cadence |
+| `database is locked` | Two miner processes on one SQLite store | Ensure only one `sn13-miner` in `pm2 status` |
+| `OOM killed` | RAM low | Upgrade VPS or reduce scrape batch size |
+| Disk full | Local store + logs grew | See log rotation above; check `du -sh` on the data dir |
 
 ---
 
 ## Summary
 
-- ✅ Set up `.env` with secrets (API keys, paths)
-- ✅ Registered sports-coverage metadata on the subnet
-- ✅ Launched miner in foreground, verified healthy logs
+- ✅ Set up `.env` with scraper credentials and paths
+- ✅ Launched the miner in foreground, verified healthy logs
 - ✅ Migrated to PM2/systemd for 24/7 operation
 - ✅ Monitor logs + set up log rotation
-- ✅ Understand health check & common error remediation
+- ✅ Understand health checks & common error remediation
+- ✅ Understand why btcli (v11) and the miner (SDK 10.3.0) live in separate venvs
 
 ### ✅ Quick Check
 
-1. Why is `.env` separate from `config.yaml`?
-2. What's the role of metadata registration beyond almanac binding?
+1. Why is `.env` separate from the repo's checked-in config?
+2. Why do `btcli` and `neurons/miner.py` need different virtual environments?
 3. PM2 vs systemd: when to choose which?
-4. Why does log rotation matter for production miners?
-5. After 6 hours of running, what number in the metagraph signals your miner is starting to be scored?
+4. Why does log rotation matter more on SN13 than on a lightweight subnet?
+5. After 24–48 hours, what number in the metagraph signals your miner is starting to be scored?
 
 ### Troubleshooting
 
@@ -425,14 +432,14 @@ sudo nano /etc/logrotate.d/sn41-miner
 |---|---|
 | PM2 doesn't restart after reboot | Re-run `pm2 save && pm2 startup` |
 | Logs aren't rotating | Install the `pm2-logrotate` plugin |
-| Disk suddenly full | Check `du -sh logs/`: usually debug logs are the culprit |
-| Queries arrive but response times out | Your handler is too slow: tune trade execution |
-| Validators send different query versions | Update the repo to the latest version (`git pull`) |
+| Disk suddenly full | Check `du -sh logs/` and the data dir |
+| `btcli` command not found in a script | Use the absolute path `~/.venvs/bt/bin/btcli` |
+| Miner runs but index never grows | Scraper credentials invalid — check for per-batch errors |
 
 :::danger Monitor, Don't Set-and-Forget
-Miners that are "set and forget" often underperform because validators update protocols and you fall behind. At minimum **check logs once a day** the first week.
+Miners that are "set and forget" often underperform because subnet code and scoring change and you fall behind. At minimum **check logs once a day** the first week, and `git pull` the repo periodically.
 :::
 
 ---
 
-**Next:** [Programmatic Trade Execution →](/TH5-Running-a-Miner/sn41-trade-execution)
+**Next:** [Getting Ready for Mining →](/TH4-Wallets-and-Miner-Setup/getting-ready-for-mining)

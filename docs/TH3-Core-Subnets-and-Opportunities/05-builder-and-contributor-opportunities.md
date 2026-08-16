@@ -1,7 +1,7 @@
 ---
 title: 'Builder & Contributor Opportunities'
 description: 'The paths open to you after the camp: run a miner, become a validator, build or own a subnet, contribute to subnet repos, join the community, and apply for Opentensor Foundation grants.'
-sidebar_position: 6
+sidebar_position: 5
 ---
 
 # Builder & Contributor Opportunities
@@ -10,7 +10,7 @@ Understanding subnets is the start. The real value comes from **participating**.
 
 ## Run a Miner
 
-The most direct entry point: deploy a miner and start earning emissions for real work. You'll do this hands-on for **SN13** and **SN41**. Once comfortable, the same pattern transfers to almost any subnet.
+The most direct entry point: deploy a miner and start earning emissions for real work. You'll do this hands-on for **SN13**. Once comfortable, the same pattern transfers to almost any subnet.
 
 ## Become a Validator
 

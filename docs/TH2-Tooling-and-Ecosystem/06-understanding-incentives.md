@@ -158,7 +158,7 @@ From a subnet owner's perspective: if the subnet is quiet (low total validator s
 Let's combine all the concepts into one concrete scenario.
 
 **Setup:**
-- You're a miner on SN41 (Sportstensor)
+- You're a miner on SN13 (Data Universe)
 - Your UID = 17
 - 128 active miners, 24 active validators
 - Subnet emission per block = 0.8 TAO
@@ -215,5 +215,5 @@ You now understand Bittensor's economics end to end. Next we move into **practic
 
 ### Additional References
 
-- [Yuma Consensus Deep Dive (Opentensor Blog)](https://blog.opentensor.ai/)
-- [Bittensor Docs: Subnet Architecture](https://docs.bittensor.com/subnets/understanding-subnets)
+- [Yuma Consensus Deep Dive (Opentensor Blog)](https://www.bittensor.com/docs/concepts/network)
+- [Bittensor Docs: Subnet Architecture](https://www.bittensor.com/docs/concepts/network)

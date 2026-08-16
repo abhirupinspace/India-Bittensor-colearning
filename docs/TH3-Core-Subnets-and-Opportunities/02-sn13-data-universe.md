@@ -280,8 +280,10 @@ The **Data Universe (SN13) hands-on track** will walk you step-by-step through:
 
 All the concepts here: **freshness, desirability, S3 buckets, commitment hashes**: you'll execute with your own hands during the hands-on setup. Make sure you understand them at the conceptual level now.
 
-:::tip Pair It With SN41
-We recommend every participant **try both**: SN41 (Sportstensor) to learn a revenue-generating prediction subnet, and SN13 to learn the most beginner-friendly data subnet. The next page covers SN41.
+:::tip SN13 Is the Camp's Hands-On Subnet
+SN13 is the subnet you'll actually build and run a miner on in TH4 and TH5. It's the most
+beginner-friendly data subnet, it runs on a modest VPS, and — importantly — its codebase is
+actively maintained. The next page surveys other notable subnets for context.
 :::
 
 ---
@@ -299,7 +301,7 @@ What you should remember from this page:
 
 ### ✅ Quick Check
 
-Before moving on to SN41 (Sportstensor), make sure you can answer:
+Before moving on, make sure you can answer:
 
 1. Why is SN13 data stored in the miner's S3 bucket, not on-chain?
 2. The three SN13 scoring dimensions are... (name them all).
@@ -321,4 +323,4 @@ All answered → continue. If you're shaky on the scoring formula, re-read the *
 
 ---
 
-**Next:** [SN41: Sportstensor → Sports Event Prediction Subnet](/TH3-Core-Subnets-and-Opportunities/sn41-sportstensor)
+**Next:** [Other Notable Subnets → Chutes & Ridges](/TH3-Core-Subnets-and-Opportunities/other-notable-subnets)

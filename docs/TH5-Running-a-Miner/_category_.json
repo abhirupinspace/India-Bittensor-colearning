@@ -1,8 +1,8 @@
 {
-  "label": "TH5 — Running a Miner",
+  "label": "TH5 \u2014 Running a Miner",
   "position": 5,
   "link": {
     "type": "generated-index",
-    "description": "Run a real miner: register, obtain your UID, run the local miner, then go deep on SN41 (trade execution & strategies) and SN13 (scraping, scoring, S3 storage). Finishes with logs, common errors, and a debugging workshop."
+    "description": "Run a real miner: register your hotkey, run a local miner end to end, then go deep on SN13 Data Universe (scraping, scoring, S3 storage). Finishes with logs, common errors, and a debugging workshop."
   }
 }

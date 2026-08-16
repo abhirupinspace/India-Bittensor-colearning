@@ -1,7 +1,7 @@
 ---
 title: 'Use Cases'
-description: 'Real-world use cases across Bittensor subnets: how SN13, SN41, Chutes, and Ridges map onto concrete problems, and why decentralized incentivized markets unlock work that centralized platforms struggle to.'
-sidebar_position: 5
+description: 'Real-world use cases across Bittensor subnets: how SN13, Chutes, Ridges, and prediction subnets map onto concrete problems, and why decentralized incentivized markets unlock work that centralized platforms struggle to.'
+sidebar_position: 4
 ---
 
 # Use Cases
@@ -13,7 +13,7 @@ Each subnet isn't an academic exercise: it produces a commodity that someone act
 | Subnet | Sector | Real-World Use Case |
 |---|---|---|
 | **SN13 (Data Universe)** | Data | Provisioning fresh, human-generated training data (Reddit, X, YouTube) for teams fine-tuning LLMs or training sentiment models |
-| **SN41 (Sportstensor)** | Prediction | Early sports outcome predictions and odds signals sold to sportsbooks and prediction platforms |
+| **SN41 (Almanac)** | Prediction | Information signals for prediction markets, scored on trading performance |
 | **Chutes** | Inference | Cheap, censorship-resistant LLM inference on open-source models for indie developers and grey-zone applications |
 | **Ridges** | Code intelligence | Automated code fixes, refactors, and CI/CD auto-patching: a permissionless alternative to Devin/Cursor |
 

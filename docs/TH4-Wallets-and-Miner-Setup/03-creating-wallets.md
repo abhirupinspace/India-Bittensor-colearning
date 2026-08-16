@@ -22,7 +22,7 @@ This is the **do-it** page. For the conceptual background — coldkey vs hotkey,
 
 :::note Prerequisites
 - ✅ btcli installed and `btcli --help` works
-- ✅ venv active: `source ~/bittensor-env/bin/activate`
+- ✅ venv active: `source ~/.venvs/bt/bin/activate`
 :::
 
 ---
@@ -32,29 +32,29 @@ This is the **do-it** page. For the conceptual background — coldkey vs hotkey,
 Activate the venv first:
 
 ```bash
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 ```
 
 Create the coldkey with a wallet name:
 
 ```bash
-btcli wallet create --wallet-name mywallet --hotkey miner1
+btcli wallet create -w mywallet -H miner1
 ```
 
 This command will:
 1. Ask you to confirm the wallet name
-2. Create a **coldkey** and display the **24-word mnemonic**
+2. Create a **coldkey** and display its **mnemonic** (12 words by default; you can pick 15/18/21/24)
 3. Ask you to set a **password** to encrypt the local coldkey file
 4. Create a **hotkey** named `miner1` at the same time
 
 :::warning Write the Mnemonic Down Now!
-When btcli displays the 24-word mnemonic: **write it on physical paper**, not in:
+When btcli displays the mnemonic: **write it on physical paper**, not in:
 - ❌ Screenshots
 - ❌ A text file on your computer
 - ❌ WhatsApp/Telegram chats
 - ❌ Cloud notes (Google Keep, Notion, etc.)
 
-Store the paper somewhere safe. The mnemonic is the only way to recover the wallet if the file is lost or your computer breaks.
+Store the paper somewhere safe, and keep **more than one copy in separate locations** — one fire or theft shouldn't destroy every copy. The mnemonic is the only way to recover the wallet if the file is lost or your computer breaks. The password only decrypts the local file; it is *not* a backup and cannot regenerate a lost key.
 :::
 
 ---
@@ -64,7 +64,7 @@ Store the paper somewhere safe. The mnemonic is the only way to recover the wall
 If you already have a wallet but no hotkey, or you want a separate hotkey per subnet, create one manually:
 
 ```bash
-btcli wallet new_hotkey --wallet-name mywallet --hotkey miner1
+btcli wallet new-hotkey -w mywallet -H miner1
 ```
 
 :::important Keep the Hotkey Name Consistent
@@ -87,7 +87,7 @@ The hotkey also has its own mnemonic: back it up too, although it's not as criti
 btcli wallet list
 
 # Wallet overview (balance & hotkeys)
-btcli wallet overview --wallet-name mywallet
+btcli wallet overview -w mywallet
 ```
 
 `btcli wallet list` output:
@@ -122,14 +122,25 @@ The wallet is stored at:
 ```
 ~/.bittensor/wallets/
 └── mywallet/
-    ├── coldkey          ← encrypted file (requires password)
-    ├── coldkeypub.txt   ← public key (safe to share)
+    ├── coldkey          ← coldkey secret, password-encrypted (NaCl)
+    ├── coldkeypub.txt   ← public key + ss58 address, unencrypted (no secrets)
     └── hotkeys/
-        └── miner1       ← hotkey (encrypted)
+        └── miner1       ← hotkey, UNENCRYPTED plaintext (private key + mnemonic)
 ```
 
-:::tip Back Up the Wallet Files
-In addition to the mnemonic, also back up the `~/.bittensor/wallets/` folder to a USB drive or encrypted cloud storage. But remember: **the file alone is not enough** if you forget the password: the mnemonic remains the primary backup.
+:::danger Hotkey files have no password
+btcli always writes hotkeys in **plaintext** — private key and mnemonic included. Nothing but
+filesystem permissions protects them. Assume anything that can read the disk can read your hotkey.
+
+This is why you provision hotkeys to a server but never the coldkey. A leaked hotkey can't move
+your TAO, but it *can* submit garbage weights and burn that UID's reputation.
+:::
+
+:::tip Back Up the Wallet Files — Carefully
+The mnemonic is the primary backup. If you also copy the `~/.bittensor/wallets/` folder, note
+that you're copying **plaintext hotkey secrets** with it. Put that copy on an **encrypted offline
+drive** (GPG or VeraCrypt) that only ever connects to a trusted, offline machine — not ordinary
+cloud storage.
 :::
 
 ---
@@ -139,8 +150,8 @@ In addition to the mnemonic, also back up the `~/.bittensor/wallets/` folder to 
 | Error | Cause | Fix |
 |-------|-------|-----|
 | `Wallet not found` | Wrong wallet name | Check: `btcli wallet list` |
-| `Invalid password` | Password typo | Try again: 3 wrong attempts triggers a cooldown |
-| `Wallet file corrupted` | File damaged | Restore from mnemonic: `btcli wallet regen_coldkey` |
+| `Invalid password` | Password typo | Retry. There is **no password reset** — if it is truly lost, restore from the mnemonic with `btcli wallet regen-coldkey` |
+| `Wallet file corrupted` | File damaged | Restore from mnemonic: `btcli wallet regen-coldkey` |
 
 ### Restore a Wallet From Mnemonic
 
@@ -148,11 +159,11 @@ If you switch computers or the file is lost:
 
 ```bash
 # Restore coldkey
-btcli wallet regen_coldkey --wallet-name mywallet
-# Will ask for your 24-word mnemonic
+btcli wallet regen-coldkey -w mywallet
+# Will ask for your mnemonic (no password needed to restore)
 
 # Restore hotkey
-btcli wallet regen_hotkey --wallet-name mywallet --hotkey miner1
+btcli wallet regen-hotkey -w mywallet -H miner1
 # Will ask for the hotkey mnemonic
 ```
 
@@ -160,10 +171,10 @@ btcli wallet regen_hotkey --wallet-name mywallet --hotkey miner1
 
 ## Summary
 
-- Wallet creation command: `btcli wallet create --wallet-name mywallet --hotkey miner1`
-- Back up the **24-word mnemonic on physical paper**: there's no other recovery
-- Verify with `btcli wallet list` and `btcli wallet overview --wallet-name mywallet`
-- Lost the file? Restore with `btcli wallet regen_coldkey` and your mnemonic
+- Wallet creation command: `btcli wallet create -w mywallet -H miner1`
+- Back up the **mnemonic (12 words by default) on physical paper**, in more than one location: there's no other recovery
+- Verify with `btcli wallet list` and `btcli wallet overview -w mywallet`
+- Lost the file? Restore with `btcli wallet regen-coldkey` and your mnemonic
 
 ### ✅ Quick Check
 

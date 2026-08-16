@@ -1,7 +1,7 @@
 ---
 title: 'Setting Up the Bittensor SDK'
 sidebar_position: 2
-description: 'Install Python 3.10+, create an isolated virtual environment, install bittensor-cli and the Bittensor SDK, then verify everything runs on Windows WSL2, macOS, and Linux.'
+description: 'Install Python 3.10–3.14, create isolated virtual environments, install Bittensor 11 (SDK + btcli in one package) plus a pinned venv for subnet miner code, then verify everything runs on Windows WSL2, macOS, and Linux.'
 ---
 
 import Tabs from '@theme/Tabs';
@@ -11,9 +11,9 @@ import TabItem from '@theme/TabItem';
 
 :::info What You'll Learn
 By the end of this page you will:
-- Have **Python 3.10+** installed and verified
-- Have an isolated **virtual environment** at `~/bittensor-env`
-- Have **`btcli`** and the **Bittensor SDK** (`bittensor<10.0.0`) installed in the venv
+- Have **Python 3.10–3.14** installed and verified
+- Have an isolated **virtual environment** at `~/.venvs/bt` running **Bittensor 11**
+- Have a second, **pinned** venv at `~/.venvs/sn13` for subnet miner code, and understand why
 - Be able to run `btcli --help` without errors
 :::
 
@@ -119,19 +119,19 @@ A virtual environment (venv) = an isolated sandbox for Python dependencies. Impo
 
 ```bash
 # Create the venv in your home directory
-python3 -m venv ~/bittensor-env
+python3 -m venv ~/.venvs/bt
 
 # Activate the venv
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 
 # Your prompt will change to:
-# (bittensor-env) ubuntu@hostname:~$
+# (bt) ubuntu@hostname:~$
 ```
 
 Add an alias so you don't have to type the full path each time:
 
 ```bash
-echo 'alias btenv="source ~/bittensor-env/bin/activate"' >> ~/.bashrc
+echo 'alias btenv="source ~/.venvs/bt/bin/activate"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -142,19 +142,19 @@ Now you can just type `btenv` to activate the venv.
 
 ```bash
 # Create the venv
-python3.10 -m venv ~/bittensor-env
+python3 -m venv ~/.venvs/bt
 
 # Activate the venv
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 
 # Your prompt becomes:
-# (bittensor-env) username@hostname ~ %
+# (bt) username@hostname ~ %
 ```
 
 Add an alias:
 
 ```bash
-echo 'alias btenv="source ~/bittensor-env/bin/activate"' >> ~/.zprofile
+echo 'alias btenv="source ~/.venvs/bt/bin/activate"' >> ~/.zprofile
 source ~/.zprofile
 ```
 
@@ -163,13 +163,13 @@ source ~/.zprofile
 
 ```bash
 # Create the venv
-python3 -m venv ~/bittensor-env
+python3 -m venv ~/.venvs/bt
 
 # Activate
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 
 # Convenient alias
-echo 'alias btenv="source ~/bittensor-env/bin/activate"' >> ~/.bashrc
+echo 'alias btenv="source ~/.venvs/bt/bin/activate"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -177,31 +177,100 @@ source ~/.bashrc
 </Tabs>
 
 :::warning Don't Forget to Activate the venv
-Every time you open a new terminal you must activate the venv again: `source ~/bittensor-env/bin/activate` (or `btenv` if you set up the alias). If you forget, `btcli` won't be found.
+Every time you open a new terminal you must activate the venv again: `source ~/.venvs/bt/bin/activate` (or `btenv` if you set up the alias). If you forget, `btcli` won't be found.
 :::
 
 ---
 
-## Step 3: Install btcli & the Bittensor SDK
+## Step 3: Install Bittensor 11
 
-Make sure the venv is **active** (you see `(bittensor-env)` in the prompt) before continuing.
+Make sure the venv is **active** (you see `(bt)` in the prompt) before continuing.
+
+Since **Bittensor 11** (July 2026) there is only **one package**. It ships the SDK, the wallet,
+and the `btcli` command together:
 
 ```bash
 # Upgrade pip first
 pip install --upgrade pip
 
-# Install the Bittensor CLI (command-line tool)
-pip install bittensor-cli
-
-# Install the Bittensor SDK: IMPORTANT: pin to a version < 10.0.0
-# Many subnet templates aren't yet compatible with SDK v10+
-pip install "bittensor<10.0.0"
+# One package = SDK + wallet + btcli
+pip install bittensor
 ```
 
-:::danger Why `bittensor<10.0.0`?
-Bittensor SDK v10.0.0 introduced breaking changes to internal APIs. Most public subnet templates (including `opentensor/bittensor-subnet-template`) still use the older SDK structure. If you install the latest version, you may get `ImportError` or `AttributeError` when running the miner.
+:::danger If you ever installed the old packages, remove them first
+Before v11, `btcli` shipped as a separate `bittensor-cli` package and the wallet as
+`bittensor-wallet`. Both were **archived upstream in July 2026**. If they're still installed
+you'll end up with a conflicting `btcli` on your PATH:
 
-If the specific subnet you use later supports SDK v10+, you can upgrade then.
+```bash
+pip uninstall -y bittensor-cli bittensor-wallet
+pip install -U bittensor
+```
+:::
+
+:::danger Supply-chain risk is not hypothetical here
+In **July 2024** a compromised PyPI release of the legacy `bittensor` package (**6.12.2**)
+exfiltrated coldkey material from every machine that installed it. The chain ran in safe mode
+from **July 2–12, 2024** while the damage was contained.
+
+Practical rules:
+- **Pin exact versions** in anything unattended (a VPS miner, CI) — never a bare `pip install` in automation
+- Upgrade only to releases announced on official channels
+- For a machine holding real value, install from the source repo at a **signed tag** (`git tag -v`) rather than trusting a package index
+- Install into a **venv**, never system-wide, so a bad package can't shadow everything
+:::
+
+:::note Where the SDK lives now
+`opentensor/bittensor` was archived on 2026-07-10. SDK development moved into the
+[subtensor monorepo](https://github.com/RaoFoundation/subtensor) (`sdk/python`), which is what
+ships to PyPI as Bittensor 11. Old v10 releases remain installable, but nothing new is cut from
+the old repo.
+:::
+
+---
+
+## Step 3b: The Second venv (For Subnet Miner Code)
+
+This one surprises people, so read it before you hit the error.
+
+`btcli` runs on **Bittensor 11**. But subnet miner repos haven't all migrated yet — Data Universe
+(SN13), the subnet you'll mine in TH5, still pins **`bittensor==10.3.0`**. SDK 10 and SDK 11
+cannot coexist in one environment.
+
+So you keep **two** virtual environments:
+
+| venv | Install | Used for |
+|---|---|---|
+| `~/.venvs/bt` | `bittensor` (11.x) | `btcli` — wallets, registration, balances, metagraph |
+| `~/.venvs/sn13` | `bittensor==10.3.0` | running the SN13 miner code |
+
+Create the second one now (you'll populate the repo in TH5):
+
+```bash
+deactivate 2>/dev/null
+
+python3 -m venv ~/.venvs/sn13
+source ~/.venvs/sn13/bin/activate
+pip install --upgrade pip
+pip install "bittensor==10.3.0"
+
+python -c "import bittensor; print(bittensor.__version__)"   # 10.3.0
+deactivate
+```
+
+Add a second alias so switching is painless:
+
+```bash
+echo 'alias sn13env="source ~/.venvs/sn13/bin/activate"' >> ~/.bashrc   # or ~/.zprofile on macOS
+```
+
+:::tip How to tell which venv you need
+- Command starts with **`btcli`** → `btenv` (Bittensor 11)
+- Command starts with **`python ./neurons/miner.py`** → `sn13env` (SDK 10.3.0)
+
+You'll also notice the flags differ: btcli v11 uses `-w` / `-H` / `-n`, while the miner script
+uses the older `--wallet.name` / `--wallet.hotkey` argparse style. That's not an inconsistency in
+this guide — they're two programs on two different SDK majors.
 :::
 
 ---
@@ -209,50 +278,143 @@ If the specific subnet you use later supports SDK v10+, you can upgrade then.
 ## ✅ Step 4: Verify the Installation
 
 ```bash
+source ~/.venvs/bt/bin/activate
+
 # Verify btcli
 btcli --help
 # Should show help text with the list of commands
 
 # Verify btcli version
 btcli --version
-# Output: btcli/x.x.x ...
+# Output: 11.x.x
 
-# Verify the SDK
+# Verify the SDK (same package)
 python -c "import bittensor; print('bittensor version:', bittensor.__version__)"
-# Output: bittensor version: 7.x.x or 8.x.x (must be < 10)
+# Output: bittensor version: 11.1.0 (or newer 11.x)
 ```
 
-Normal `btcli --help` output:
+Normal `btcli --help` output (v11 groups commands into sections):
 
 ```text
-usage: btcli <command> <command args>
+ Usage: btcli [OPTIONS] COMMAND [ARGS]...
 
-bittensor cli v8.x.x
+ btcli - a lean command line for the Bittensor chain.
 
-positional arguments:
-  {wallet,subnets,stake,root,info,...}
-    wallet              Commands for managing and viewing wallets.
-    subnets             Commands for interacting with subnets.
-    ...
+╭─ Commands ──────────────────────────────────────────────╮
+│ wallet      Create and manage wallets.                  │
+│ stake       Query and manage stake.                     │
+│ subnets     Inspect subnets.                            │
+│ config      Read and write persistent CLI config.       │
+╰─────────────────────────────────────────────────────────╯
+╭─ Raw chain access & agents ─────────────────────────────╮
+│ query       Query chain state (generated from reads).   │
+│ tx          Submit transactions (generated from intents)│
+│ explain     Long-form explanation of an error code.     │
+╰─────────────────────────────────────────────────────────╯
 ```
 
 :::tip If You See `btcli: command not found`
 The venv isn't active. Run:
 ```bash
-source ~/bittensor-env/bin/activate
+source ~/.venvs/bt/bin/activate
 ```
 And try again.
 :::
 
 ---
 
-## Step 4b: Fix SSL (If Needed)
+## Step 4b: Fix SSL on macOS (Very Common)
 
-Some setups encounter SSL errors when btcli connects to the chain. If you see `SSL: CERTIFICATE_VERIFY_FAILED`:
+If any btcli command that talks to the chain fails like this:
+
+```text
+error: could not reach test: could not connect to any endpoint:
+[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed:
+unable to get local issuer certificate (_ssl.c:1081)
+```
+
+…your Python has **no root certificates wired up**. This is not a Bittensor bug and not a network
+problem: Python installed from **python.org** does not use the macOS system keychain, and ships
+with an empty cert directory until you run its installer script once.
+
+Confirm it:
 
 ```bash
-python -m bittensor certifi
+python3 -c "import ssl; print(ssl.get_default_verify_paths())"
+# cafile=None and capath=None  ->  this is the problem
 ```
+
+Fix it by running the installer that ships with your Python version:
+
+```bash
+"/Applications/Python 3.12/Install Certificates.command"
+```
+
+That script pip-installs `certifi` and symlinks Python's expected `cert.pem` at the certifi
+bundle. Verify:
+
+```bash
+python3 -c "
+import ssl, socket
+ctx = ssl.create_default_context()
+with socket.create_connection(('test.finney.opentensor.ai', 443), timeout=15) as s:
+    ctx.wrap_socket(s, server_hostname='test.finney.opentensor.ai')
+print('TLS OK')
+"
+```
+
+:::note Match the version number
+Use the folder matching the Python that runs btcli — check with `head -1 $(which btcli)`. If you
+installed Python via **Homebrew** or **pyenv** instead, you generally won't hit this; those builds
+use a cert store already.
+:::
+
+:::warning The old fix no longer works
+Pre-v11 guides suggest `python -m bittensor certifi`. That was removed — in Bittensor 11 it fails
+with `No module named bittensor.__main__`. Use the `Install Certificates.command` route above.
+:::
+
+---
+
+## Step 4c: Check You Only Have ONE btcli
+
+This bites people who used Bittensor before v11:
+
+```bash
+which -a btcli
+```
+
+If more than one path comes back, you have competing installs — commonly a Homebrew `btcli`
+(v9.x) alongside the v11 one from pip. Whichever appears **first** wins, and v9 will reject every
+command in this guidebook with `No such option: --wallet`.
+
+```bash
+# what version is each one?
+head -1 $(which btcli)     # shows which python it belongs to
+btcli --version            # must be 11.x.x
+
+# remove a stale Homebrew copy
+brew uninstall btcli
+```
+
+---
+
+## Step 4d: Persistent Config
+
+v11 stores CLI defaults in `~/.bittensor/btcli.json` (the v9 `config.yml` is ignored):
+
+```bash
+btcli config set network test
+btcli config set wallet my_coldkey
+btcli config get
+btcli config path
+```
+
+:::note "legacy (v9) btcli config" warning
+If you used btcli v9 on this machine, the first v11 run warns that `~/.bittensor/config.yml` is
+ignored. Re-set what you need with `btcli config set`, then rename or delete the old file to
+silence the warning. Your **wallets** are untouched by this — only CLI defaults moved.
+:::
 
 ---
 
@@ -263,37 +425,45 @@ python -m bittensor certifi
 | `error: Microsoft Visual C++ 14.0 required` | You're on Windows without WSL2 | Switch to the WSL2 Ubuntu terminal |
 | `failed building wheel for cryptography` | Missing dev headers | `sudo apt install libssl-dev libffi-dev python3-dev` |
 | `pip: command not found` | pip isn't in the venv's PATH | `python3 -m ensurepip --upgrade` |
-| `btcli: command not found` | venv not active | `source ~/bittensor-env/bin/activate` |
-| `ModuleNotFoundError: 'bittensor'` | SDK not installed or wrong venv | Make sure venv is active, then `pip install "bittensor<10.0.0"` |
-| `ERROR: Could not find a version that satisfies the requirement bittensor` | Network issue / PyPI timeout | `pip install "bittensor<10.0.0" --retries 5` |
-| `ImportError: cannot import name 'X' from 'bittensor'` | SDK v10+ incompatible | `pip uninstall bittensor && pip install "bittensor<10.0.0"` |
+| `btcli: command not found` | venv not active | `source ~/.venvs/bt/bin/activate` |
+| `ModuleNotFoundError: 'bittensor'` | SDK not installed or wrong venv | Make sure venv is active, then `pip install bittensor` |
+| `ERROR: Could not find a version that satisfies the requirement bittensor` | Network issue / PyPI timeout | `pip install bittensor --retries 5` |
+| `ImportError: cannot import name 'X' from 'bittensor'` | Running **miner code** against SDK 11 | Miner code needs the pinned venv: `sn13env`, which has `bittensor==10.3.0` |
+| Two different `btcli` versions on PATH | Old `bittensor-cli` still installed | `pip uninstall -y bittensor-cli bittensor-wallet` |
+| `requires-python` mismatch on install | Python outside 3.10–3.14 | Bittensor 11 requires `>=3.10,<3.15` |
+| `SSL: CERTIFICATE_VERIFY_FAILED` on any chain command | python.org Python has no root certs wired up | Run `"/Applications/Python 3.12/Install Certificates.command"` (see Step 4b) |
+| `No such option: --wallet` | An old v9 `btcli` is first on your PATH | `which -a btcli`, then remove the stale one (see Step 4c) |
 
 ---
 
 ## Quick Reference: Daily Commands
 
 ```bash
-# Activate the venv (required every new session)
-source ~/bittensor-env/bin/activate   # or: btenv
+# Activate the btcli venv (Bittensor 11)
+source ~/.venvs/bt/bin/activate   # or: btenv
 
-# Deactivate the venv
+# Activate the miner venv (SDK 10.3.0)
+source ~/.venvs/sn13/bin/activate # or: sn13env
+
+# Deactivate whichever is active
 deactivate
 
-# Check installed packages
-pip list | grep -E "bittensor|btcli"
+# Check what's installed in the current venv
+pip list | grep -i bittensor
 
-# Update btcli alone (without upgrading the SDK)
-pip install --upgrade bittensor-cli
+# Update btcli + SDK together (they're one package now)
+pip install --upgrade bittensor
 ```
 
 ---
 
 ## Summary
 
-- **Python 3.10+** is the minimum requirement: Ubuntu 22.04 already includes it
-- **venv** isolated at `~/bittensor-env`: activate it every new session
-- Install **`bittensor-cli`** (btcli) and **`bittensor<10.0.0`** (SDK) separately
-- The `btenv` alias makes activation easier
+- **Python 3.10–3.14** — Bittensor 11 declares `>=3.10,<3.15`
+- Since v11 there is **one package**: `pip install bittensor` gives you the SDK, the wallet, and `btcli`
+- `bittensor-cli` and `bittensor-wallet` are **archived** — uninstall them if present
+- You keep **two venvs**: `~/.venvs/bt` (v11, for btcli) and `~/.venvs/sn13` (10.3.0, for miner code)
+- The `btenv` / `sn13env` aliases make switching easier
 
 ---
 

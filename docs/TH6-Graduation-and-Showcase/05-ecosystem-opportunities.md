@@ -1,7 +1,7 @@
 ---
 title: 'Ecosystem Opportunities'
 sidebar_position: 5
-description: 'Where to go next after the HackQuest × Bittensor Co-Learning Camp #21 India — keep mining, validate, build a subnet, apply for grants, and stay connected.'
+description: 'Where to go next after the HackQuest × Bittensor Co-Learning Camp #23 India — keep mining, validate, build a subnet, apply for grants, and stay connected.'
 ---
 
 # Ecosystem Opportunities

@@ -1,6 +1,6 @@
 ---
 title: 'SN13: Scoring & Rewards'
-sidebar_position: 9
+sidebar_position: 5
 description: 'Break down the SN13 scoring mechanism: freshness, uniqueness, volume, coverage, validity. The validator audit mechanism, common pitfalls, and a TAO reward optimization playbook for miners.'
 ---
 
@@ -305,13 +305,13 @@ Check subnet performance:
 
 The Macrocosmos team often publishes dashboards:
 
-- `https://data-universe.macrocosmos.ai` (check if active)
+- [macrocosmos.ai](https://www.macrocosmos.ai) — Macrocosmos dashboards for SN13
 - Community Grafana dashboards: link is typically in Discord `#sn13-general`
 
 ### CLI Check
 
 ```bash
-btcli subnet metagraph --netuid 13 | head -50
+btcli subnets metagraph 13 | head -50
 # Find your UID row, look at columns:
 # - Stake: total stake (irrelevant for miner)
 # - Trust: from validators
@@ -353,7 +353,7 @@ while True:
 - **Validity = gate**: failing verification means all other dimensions are 0
 - Validators audit 1% sample against the source every ~20 minutes
 - **Niche labels + non-English content** = unfair-advantage strategy for regional miners
-- Monitor via **taostats.io/subnets/13** + CLI `btcli subnet metagraph`
+- Monitor via **taostats.io/subnets/13** + CLI `btcli subnets metagraph`
 - Tiered optimization: **Survival → Growing → Elite**
 
 ### ✅ Quick Check

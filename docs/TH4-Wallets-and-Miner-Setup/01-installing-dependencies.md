@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 :::info What You'll Learn
 By the end of this page you will:
-- Understand **the purpose of local mining** and how it differs from production mining on Sportstensor (SN41) and Data Universe (SN13)
+- Understand **the purpose of local mining** and how it differs from production mining on Data Universe (SN13)
 - Know whether **your computer meets the requirements** to run a local miner
 - Have **WSL2 active** (Windows) or your terminal ready (macOS/Linux)
 - Be ready to install btcli next
@@ -28,7 +28,7 @@ By the end of this page you will:
 
 ## Why Start With Local Mining?
 
-Sportstensor and Data Universe are designed for **production miners**: meaning a cloud VPS, a static public IP, and monthly operating costs. That's great for graduation, but **not the ideal starting point** if you've never touched the Bittensor CLI before.
+Data Universe is designed for **production miners**: meaning a cloud VPS, a static public IP, and monthly operating costs. That's great for graduation, but **not the ideal starting point** if you've never touched the Bittensor CLI before.
 
 **Local mining exists to answer the question that comes up often:**
 
@@ -52,8 +52,8 @@ All of this **without a GPU, without a VPS, without real TAO.**
 | First time using btcli | ✅ Highly suitable |
 | Has a laptop with 8 GB RAM + SSD | ✅ Sufficient |
 | Wants to learn the mining flow before investing in a VPS | ✅ Right place |
-| Already has a VPS and wants to go straight to production | ⬛ Skip ahead to Sportstensor/Data Universe |
-| Wants serious mainnet mining | ⬛ Local mining is a stepping stone, then continue with Sportstensor or Data Universe |
+| Already has a VPS and wants to go straight to production | ⬛ Skip ahead to Data Universe (SN13) |
+| Wants serious mainnet mining | ⬛ Local mining is a stepping stone, then continue with Data Universe |
 
 ---
 
@@ -232,7 +232,7 @@ flowchart LR
     U4 --> U5[Run Miner]
     U5 --> U6[Connection & Ports]
     U6 --> U7[Debugging]
-    U7 --> NEXT[Continue to<br/>Sportstensor or<br/>Data Universe]
+    U7 --> NEXT[Continue to<br/>Data Universe<br/>SN13]
 
     style U1 fill:#F1F3F4,stroke:#5F6368
     style NEXT fill:#DBDDE1,stroke:#000000
