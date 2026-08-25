@@ -118,7 +118,8 @@ Before deploying to mainnet, **always test on testnet** (no real TAO).
 
 | Tool | URL / Command | Function |
 |------|---------------|----------|
-|  **Testnet TAO** | [Bittensor Discord](https://discord.gg/qasY3HA9F9) → testnet-faucet channel | No public web faucet: request test TAO from the community with your **coldkey** SS58 |
+|  **Testnet TAO (camp)** | [TAO Testnet Token Claim form](https://forms.gle/WvdKWW7k7gpmUFg48) | Camp route: submit your name + **coldkey** SS58 |
+|  **Testnet TAO (general)** | [Bittensor Discord](https://discord.gg/qasY3HA9F9) → testnet-faucet channel | No public web faucet — request from the community with your **coldkey** SS58 |
 |  **Testnet Endpoint** | `wss://test.finney.opentensor.ai:443` | Subtensor testnet chain |
 |  **Btcli** | `pip install bittensor` → `btcli --help` | Bittensor 11 bundles SDK + wallet + CLI in one package |
 |  **Subtensor Docker** | [hub.docker.com/u/opentensorfdn](https://hub.docker.com/u/opentensorfdn) | Run a local subtensor node |
@@ -126,7 +127,7 @@ Before deploying to mainnet, **always test on testnet** (no real TAO).
 |  **Mock Subtensor** | [github.com/opentensor/bittensor/blob/master/bittensor/mock/subtensor_mock.py](https://github.com/opentensor/bittensor/) | Mock chain for unit testing |
 
 :::tip Testnet Workflow
-Deploying your own subnet? Follow: **Testnet (netuid 99, 100, etc.) → Mainnet registration**. The testnet faucet gives 1 TAO/day/wallet. Enough for several register cycles.
+Deploying your own subnet? Follow: **Testnet (netuid 99, 100, etc.) → Mainnet registration**. Test TAO is issued manually now (claim form or Discord), so request enough for several register cycles up front.
 :::
 
 ---

@@ -36,6 +36,28 @@ brew install python@3.12
 sudo apt update && sudo apt install -y python3.12 python3.12-venv build-essential git curl
 ```
 
+:::tip No local install? Use the Colab
+If you can't install locally — Windows without WSL2, a locked-down laptop, or you just want to
+follow along in a browser — run the notebook instead:
+
+**➡️ [Bittensor Co-Learning Colab](https://colab.research.google.com/drive/1GVSjmhfOZ6lYeGft7IBA_gmXlGBcPSv3?usp=sharing)**
+
+**The notebook runs the legacy SDK (v10), not Bittensor 11.** That is deliberate — it matches the
+subnet miner code — but it means **the commands in the notebook use the old flag style** and will
+not match the v11 commands on this page:
+
+| This page (btcli v11) | Colab (v10) |
+|---|---|
+| `-w my_coldkey` | `--wallet.name my_coldkey` |
+| `-H my_hotkey` | `--wallet.hotkey my_hotkey` |
+| `-n test` | `--subtensor.network test` |
+| `btcli subnets register` | `btcli subnet register` |
+
+Pick **one** and stay in it. Don't copy commands between the two — that's the single most common
+way people get stuck. Wallets you create in Colab live in that ephemeral session, so
+**save your mnemonics** before the runtime disconnects, or you lose the keys.
+:::
+
 ## 2. Install Bittensor 11
 
 One package now ships the SDK, the wallet, **and** `btcli`.
@@ -96,11 +118,29 @@ Anyone with the coldkey mnemonic owns your funds. No screenshots, no cloud, no D
 ## 4. Testnet TAO
 
 There is no public web faucet — the old `faucet.bittensor.com` is gone and `btcli` has no
-`faucet` command. Test TAO is requested from the community:
+`faucet` command. For this camp, test TAO is issued through a claim form:
 
-1. Join the [Bittensor Discord](https://discord.gg/qasY3HA9F9).
-2. Find the testnet-faucet request channel.
-3. Post your **coldkey SS58** (never the mnemonic) and say you are a Co-Learning Camp participant.
+**➡️ [Bittensor TAO Testnet Token Claim](https://forms.gle/WvdKWW7k7gpmUFg48)**
+
+It asks for two things:
+
+| Field | What to enter |
+|---|---|
+| **Name** | Your name, as registered for the camp |
+| **Coldkey address** | Your **coldkey** SS58 from `btcli wallet list` — starts with `5` |
+
+:::danger Coldkey address only — never the mnemonic
+Paste the **coldkey SS58 address** (the public one). Never the 12-word mnemonic, and never a
+hotkey address — TAO sent to a hotkey can be stranded.
+:::
+
+:::warning Deadline
+The form states **12:00 pm IST, 28th Aug**. Claim early — you cannot register a miner without
+test TAO, and §5 is blocked until it arrives.
+:::
+
+Outside the camp window, ask in the [Bittensor Discord](https://discord.gg/qasY3HA9F9)
+testnet-faucet channel instead.
 
 Once funded:
 ```bash
@@ -195,7 +235,7 @@ miner, which needs its own pinned environment. See
 
 ## Pro tips
 
-- Use **coldkey** (not hotkey) for the faucet request
+- Use the **coldkey** address (not hotkey) on the [claim form](https://forms.gle/WvdKWW7k7gpmUFg48)
 - Run `--dry-run` first, and verify `--netuid 13` + `-n test` before pressing `y` — fees are non-refundable
 - Crash? Re-run §5 — most failures are wrong netuid, an old btcli still on PATH, or an empty wallet
 - `btcli explain <ERROR_CODE>` gives a long-form explanation of any v11 error code

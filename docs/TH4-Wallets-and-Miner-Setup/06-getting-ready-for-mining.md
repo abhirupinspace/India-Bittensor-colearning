@@ -1,7 +1,7 @@
 ---
 title: 'Getting Ready for Mining'
 sidebar_position: 6
-description: 'Install btcli, create a coldkey + hotkey, back up the mnemonic safely, fund TAO from the testnet faucet or a mainnet exchange, and deploy on a hardened VPS to prepare for miner registration.'
+description: 'Install btcli, create a coldkey + hotkey, back up the mnemonic safely, fund TAO from the testnet claim form or a mainnet exchange, and deploy on a hardened VPS to prepare for miner registration.'
 ---
 
 # Getting Ready for Mining
@@ -12,7 +12,7 @@ On this page you will have:
 - A new **coldkey** (for holding TAO, offline-first)
 - A new **hotkey** (for signing miner operations, online)
 - The mnemonic **safely backed up** in an offline location
-- TAO ready in the coldkey: testnet (via faucet) or mainnet (via exchange)
+- TAO ready in the coldkey: testnet (via the claim form) or mainnet (via exchange)
 - Balance verified via `btcli wallet overview`
 - A **VPS provisioned and hardened** for running the miner with the coldkey kept offline
 :::
@@ -214,11 +214,18 @@ You'll need a screenshot of `btcli wallet list` for the graduation submission at
 ### Option A: Testnet TAO (RECOMMENDED for learning)
 
 Testnet TAO is free, but there is **no public faucet any more**: `faucet.bittensor.com` is gone,
-and Bittensor 11 has no `btcli wallet faucet` command. Test TAO is requested from the community:
+and Bittensor 11 has no `btcli wallet faucet` command.
 
-1. Join the [Bittensor Discord](https://discord.gg/qasY3HA9F9).
-2. Find the testnet-faucet request channel.
-3. Post your **coldkey SS58** — never the mnemonic — and mention you're a Co-Learning Camp participant.
+**For this camp, claim it through the form:**
+
+**➡️ [Bittensor TAO Testnet Token Claim](https://forms.gle/WvdKWW7k7gpmUFg48)**
+
+It asks for your **Name** and your **Coldkey address** (the SS58 from `btcli wallet list`, starting
+with `5`). Note the form's stated deadline — **12:00 pm IST, 28th Aug** — and claim early, since
+registration is blocked until the TAO lands.
+
+Outside the camp window, request it in the [Bittensor Discord](https://discord.gg/qasY3HA9F9)
+testnet-faucet channel instead: post your **coldkey SS58**, never the mnemonic.
 
 Once funded, verify:
 
@@ -231,7 +238,7 @@ btcli wallet overview \
 The testnet TAO (τ) balance will appear on the coldkey.
 
 :::tip Always use the coldkey address
-The faucet request takes your **coldkey** SS58, not the hotkey. Funds live on the coldkey; the
+The claim form takes your **coldkey** SS58, not the hotkey. Funds live on the coldkey; the
 hotkey only signs miner operations.
 :::
 
@@ -296,7 +303,7 @@ btcli wallet balance sn13_miner
 | `btcli --version` | `11.x.x` shows | Re-install / upgrade (`pip install -U bittensor`), make sure the `bt` venv is active |
 | `btcli wallet list` | Coldkey + hotkey appear | Re-run steps 2 & 3 |
 | Coldkey balance ≥ 1.5 TAO (mainnet) | Balance shows | Add deposit from exchange |
-| Balance ≥ 5 test-τ (testnet) | Balance shows | Re-run the faucet |
+| Balance ≥ 5 test-τ (testnet) | Balance shows | Re-submit the claim form / ask in Discord |
 
 ---
 
@@ -435,7 +442,7 @@ You have successfully:
 - ✅ Installed `btcli` + `bittensor` SDK in a virtualenv
 - ✅ Generated **coldkey** `sn13_miner` + offline mnemonic backup
 - ✅ Generated **hotkey** `miner_01` + mnemonic backup
-- ✅ Got TAO (testnet via faucet or mainnet via exchange)
+- ✅ Got TAO (testnet via the claim form, or mainnet via exchange)
 - ✅ Verified the balance via `btcli wallet overview`
 - ✅ Provisioned and hardened a VPS with the **hotkey only** (coldkey stays offline)
 
@@ -452,7 +459,7 @@ You have successfully:
 |---|---|---|
 | `command not found: btcli` | venv not active | `source ~/bittensor/venv/bin/activate` |
 | `ModuleNotFoundError: bittensor` | Install half-failed | `pip install --force-reinstall bittensor` |
-| Faucet output `rate limited` | Too many requests | Wait 1–4 hours, or ask Discord |
+| Claim not arrived yet | Issued manually, not instantly | Wait, then re-check `btcli wallet balance <coldkey> -n test` |
 | Balance shows but `0.0` | Transaction not confirmed | Wait 1–3 blocks (12–36 seconds) |
 | SS58 address looks different | Different network | Make sure endpoints match (`--subtensor.network test` for testnet) |
 | `Invalid password` on unlock | Typo | No reset: must use mnemonic via `btcli wallet regen-coldkey` |

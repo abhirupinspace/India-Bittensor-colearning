@@ -148,7 +148,7 @@ The **[One-Shot Guide](./one-shot)** is a copy-paste path: fresh laptop → regi
 - [Whitepaper](https://bittensor.com/whitepaper)
 - [Taostats Explorer](https://taostats.io)
 - [Official Documentation](https://www.bittensor.com/docs)
-- [Testnet TAO — Bittensor Discord](https://discord.gg/qasY3HA9F9) (no public web faucet)
+- [Testnet TAO — claim form](https://forms.gle/WvdKWW7k7gpmUFg48) · [Bittensor Discord](https://discord.gg/qasY3HA9F9) (no public web faucet)
 
 ---
 
